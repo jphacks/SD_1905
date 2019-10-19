@@ -39,6 +39,31 @@ const styles = StyleSheet.create({
 })
 
 export default class App extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      // Current locatinon
+      x: null,
+      y: null,
+      z: null,
+      // Current time
+      time: null,
+      // Current Music
+      music: null
+    }
+  }
+  updateLocation = (_x, _y, _z) => {
+    this.setState({
+      x: _x,
+      y: _y,
+      z: _z
+    })
+  }
+  updateMusic = (_music) => {
+    this.setState({
+      music: _music
+    })
+  } 
   render() {
     return (
       <Swiper showsButtons={true} loop={false} showsButtons={true} shoePagenation={false}>
