@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Button } from 'react-native';
 
 export class MainScreen extends React.Component {
   render() {
@@ -8,8 +8,18 @@ export class MainScreen extends React.Component {
         <Text style={styles.text}>
           ここで流れている曲や自分の場所を表示して欲しい
         </Text>
+        <Button title="Load:" onPress={this.loadData} />
       </View>
     )
+  }
+
+
+  loadData = () => {
+    storage
+      .load({ key: 'mapInfo' })
+      // .then(res => console.log(res)alert(res.name))
+      .then(res => alert(res[1].place.x))
+      .catch(err => console.warn(err))
   }
 }
 

@@ -1,9 +1,16 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Swiper from 'react-native-swiper';
+import Storage from 'react-native-storage';
+import AsyncStorage from '@react-native-community/async-storage'
 
 import { MainScreen } from './src/MainScreen.js';
 import { SettingScreen } from './src/SettingScreen.js';
+
+const storage = new Storage({
+  storageBackend: AsyncStorage
+})
+global.storage = storage // from all component
 
 const styles = StyleSheet.create({
   slide: {
