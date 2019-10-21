@@ -54,11 +54,24 @@ export class SettingScreen extends React.Component {
         musicId: this.state.musicId
       }
     ]
+    tmp = []
     storage
       .load({ key: 'mapInfo' })
-      .then(res => {tmp=res})
-      .catch(err => console.warn(err))
-    newData = newData.concat(tmp)
+      .then(res => {
+        this.tmp=res;
+      })
+      .catch(err => {
+        this.tmp=null;
+        console.warn(err);
+      })
+    if(this.tmp==null){
+      newData = newData
+    }
+    else{
+      alert(this.tmp[0])
+      // alert("not null")
+      newData = newData.concat(this.tmp)
+    }
     storage.save({
       key:
         'mapInfo',
