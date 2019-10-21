@@ -7,14 +7,20 @@ export class SettingScreen extends React.Component {
     super(props)
     this.state = {
       // location info
+      latitude: 37.78825,
+      longitude: -122.4324,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
       // time info
       date: "2016-05-15",
-      time: "8:16 PM"
+      time: "8:16 PM",
+      // music info
+      musicId: 3.141592
     }
   }
-  updateLocationInfo = ()=>{this.setState({})}
-  updateDateInfo = (_date)=>{this.setState({date:_date})}
-  updateTimeInfo = (_time)=>{this.setState({time:_time})}
+  updateLocationInfo = () => { this.setState({}) }
+  updateDateInfo = (_date) => { this.setState({ date: _date }) }
+  updateTimeInfo = (_time) => { this.setState({ time: _time }) }
   render() {
     return (
       <View style={styles.Setting}>
@@ -31,52 +37,38 @@ export class SettingScreen extends React.Component {
     )
   }
   storeData = () => {
+    newData = [
+      {
+        // id: Date.now().toString,
+        id: Date.now().toString(),
+        time: {
+          date: this.state.date,
+          time: this.state.time
+        },
+        place: {
+          latitude: this.state.latitude,
+          longitude: this.state.longitude,
+          latitudeDelta: this.state.latitudeDelta,
+          longitudeDelta: this.state.longitudeDelta,
+        },
+        musicId: this.state.musicId
+      }
+    ]
+    storage
+      .load({ key: 'mapInfo' })
+      .then(res => {tmp=res})
+      .catch(err => console.warn(err))
+    newData = newData.concat(tmp)
     storage.save({
       key:
         'mapInfo',
-      data: [
-        {
-          id: 'hoge',
-          time: {
-            year: 2020,
-            month: 10,
-            day: 12,
-            hour: 12,
-            minute: 0
-          },
-          place: {
-            x: 10,
-            y: 10,
-            z: 10,
-            accuracy: 10
-          },
-          musicId: "hello"
-        },
-        {
-          id: 'huga',
-          time: {
-            year: 2020,
-            month: 10,
-            day: 12,
-            hour: 12,
-            minute: 0
-          },
-          place: {
-            x: 10,
-            y: 10,
-            z: 10,
-            accuracy: 10
-          },
-          musicId: "hello" 
-        }
-      ]
+      data: newData
     })
   }
   loadData = () => {
     storage
       .load({ key: 'mapInfo' })
-      // .then(res => console.log(res)alert(res.name))
-      .then(res => alert(res[1].id))
+      .then(res => alert(res.length))
       .catch(err => console.warn(err))
   }
 

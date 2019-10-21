@@ -17,8 +17,7 @@ export class MainScreen extends React.Component {
   loadData = () => {
     storage
       .load({ key: 'mapInfo' })
-      // .then(res => console.log(res)alert(res.name))
-      .then(res => alert(res[1].place.x))
+      .then(res => alert(res.length))
       .catch(err => console.warn(err))
   }
 }
