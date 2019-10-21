@@ -1,16 +1,32 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
+import { Time } from './components/time.js';
 
 export class SettingScreen extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      // location info
+      // time info
+      date: "2016-05-15",
+      time: "8:16 PM"
+    }
+  }
+  updateLocationInfo = ()=>{this.setState({})}
+  updateDateInfo = (_date)=>{this.setState({date:_date})}
+  updateTimeInfo = (_time)=>{this.setState({time:_time})}
   render() {
     return (
       <View style={styles.Setting}>
         <Text style={styles.text}>
           ここで(場所×時間)→曲の設定をして欲しい
         </Text>
+        <Text style={styles.text}>
+          "state:"{this.state.date}/{this.state.time}
+        </Text>
+        <Time updateDateInfo={this.updateDateInfo} updateTimeInfo={this.updateTimeInfo}></Time>
         <Button title="Save:" onPress={this.storeData} />
         <Button title="Load:" onPress={this.loadData} />
-
       </View>
     )
   }
