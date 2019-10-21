@@ -24,15 +24,32 @@ export class SettingScreen extends React.Component {
   render() {
     return (
       <View style={styles.Setting}>
-        <Text style={styles.text}>
-          ここで(場所×時間)→曲の設定をして欲しい
-        </Text>
-        <Text style={styles.text}>
-          "state:"{this.state.date}/{this.state.time}
-        </Text>
-        <Time updateDateInfo={this.updateDateInfo} updateTimeInfo={this.updateTimeInfo}></Time>
-        <Button title="Save:" onPress={this.storeData} />
-        <Button title="Load:" onPress={this.loadData} />
+        <View style={{ flex: 1, backgroundColor: '#0000FF', justifyContent: 'center', alignItems: 'center', margin: 10 }}>
+          <Text style={styles.text}>
+            {/* "state:"{this.state.date}/{this.state.time} */}
+            Setting
+          </Text>
+        </View >
+        <View style={{ flex: 2, backgroundColor: '#FF00FF', justifyContent: 'center', alignItems: 'center', margin: 10 }}>
+          <Text style={styles.text}>
+            music
+          </Text>
+        </View >
+        <View style={{ flex: 6, backgroundColor: '#FF0000', justifyContent: 'center', alignItems: 'center', margin: 10 }}>
+          <Text style={styles.text}>
+            map
+          </Text>
+        </View >
+        <View style={{ flex: 2, backgroundColor: '#00FF00', justifyContent: 'center', alignItems: 'center', margin: 10 }}>
+          <Text style={styles.text}>
+            time
+          </Text>
+          <Time updateDateInfo={this.updateDateInfo} updateTimeInfo={this.updateTimeInfo}></Time>
+        </View >
+
+        <View style={{ flex: 1, backgroundColor: '#FFFFFF', justifyContent: 'center', alignItems: 'center', margin: 10 }}>
+          <Button title="Save" onPress={this.storeData} />
+        </View >
       </View>
     )
   }
@@ -58,16 +75,16 @@ export class SettingScreen extends React.Component {
     storage
       .load({ key: 'mapInfo' })
       .then(res => {
-        this.tmp=res;
+        this.tmp = res;
       })
       .catch(err => {
-        this.tmp=null;
+        this.tmp = null;
         console.warn(err);
       })
-    if(this.tmp==null){
+    if (this.tmp == null) {
       newData = newData
     }
-    else{
+    else {
       alert(this.tmp[0])
       // alert("not null")
       newData = newData.concat(this.tmp)
@@ -99,16 +116,13 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
   },
-  Main: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#576071',
-  },
   Setting: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'stretch',
+    paddingTop: 40,
+    paddingBottom: 50,
+    paddingHorizontal: 15,
     backgroundColor: '#afa598'
   }
 })
