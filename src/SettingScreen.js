@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, Alert} from 'react-native';
 import { Time } from './components/Time.js';
 import { Map } from './components/Map.js'
 
@@ -76,8 +76,6 @@ export class SettingScreen extends React.Component {
       newData = newData
     }
     else {
-      alert(this.tmp[0])
-      // alert("not null")
       newData = newData.concat(this.tmp)
     }
     storage.save({
@@ -85,6 +83,7 @@ export class SettingScreen extends React.Component {
         'mapInfo',
       data: newData
     })
+    Alert.alert("Success", "set the music in your world !!!")
   }
   loadData = () => {
     storage
