@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
   slide: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     backgroundColor: '#9DD6EB',
   },
   text: {
@@ -49,7 +49,7 @@ export default class App extends React.Component {
       date: "2016-05-15",
       time: "8:16 PM",
       // Current Music
-      music: null
+      music: 3.141592
     }
   }
   updateLocation = (_latitude, _longitude) => {
@@ -74,6 +74,13 @@ export default class App extends React.Component {
   render() {
     return (
       <Swiper showsButtons={true} loop={false} showsButtons={true} shoePagenation={false}>
+        <View style={styles.slide}>
+          <Text style={styles.text}>latitude : {this.state.latitude}</Text>
+          <Text style={styles.text}>longitude : {this.state.longitude}</Text>
+          <Text style={styles.text}>date : {this.state.date}</Text>
+          <Text style={styles.text}>time : {this.state.time}</Text>
+          <Text style={styles.text}>now music : {this.state.music}</Text>
+        </View>
         <MainScreen></MainScreen>
         <SettingScreen updateLocation={this.updateLocation} updateDateTime={this.updateDateTime}></SettingScreen>
       </Swiper>
