@@ -21,10 +21,13 @@ export class Map extends Component {
   }
 
   successToGetCurrentPosition = (position) => {
+    const _latitude = position.coords.latitude;
+    const _longitude = position.coords.longitude;
     this.setState({
-      latitude: position.coords.latitude,
-      longitude: position.coords.longitude
+      latitude: _latitude,
+      longitude: _longitude
     });
+    this.props.updateLocation(_latitude, _longitude);
   }
 
   failToGetCurrentPosition = (error) => {
@@ -38,7 +41,7 @@ export class Map extends Component {
   componentDidMount() {
     this._interval = setInterval(() => {
       this.getCurrentPosition(this);
-    },1000);
+    },5000);
   }
 
   componentWillUnmount() {
@@ -51,6 +54,12 @@ export class Map extends Component {
         provider = {PROVIDER_DEFAULT}
         style = {{flex: 1}}
         initialRegion={{
+          latitude:this.state.latitude,
+          longitude:this.state.longitude,
+          latitudeDelta:LatitudeDelta,
+          longitudeDelta:LongitudeDelta,
+        }}
+        region={{
           latitude:this.state.latitude,
           longitude:this.state.longitude,
           latitudeDelta:LatitudeDelta,
