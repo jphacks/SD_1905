@@ -43,22 +43,29 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       // Current locatinon
-      x: null,
-      y: null,
-      z: null,
+      latitude: 37.78825,
+      longitude: -122.4324,
       // Current time
-      time: null,
+      date: "2016-05-15",
+      time: "8:16 PM",
       // Current Music
       music: null
     }
   }
-  updateLocation = (_x, _y, _z) => {
+  updateLocation = (_latitude, _longitude) => {
     this.setState({
-      x: _x,
-      y: _y,
-      z: _z
+      latitude: _latitude,
+      longitude: _longitude
     })
   }
+
+  updateDateTime = (_date, _time) => {
+    this.setState({
+      date: "2016-05-15",
+      time: "8:16 PM",
+    })
+  }
+
   updateMusic = (_music) => {
     this.setState({
       music: _music
@@ -68,7 +75,7 @@ export default class App extends React.Component {
     return (
       <Swiper showsButtons={true} loop={false} showsButtons={true} shoePagenation={false}>
         <MainScreen></MainScreen>
-        <SettingScreen></SettingScreen>
+        <SettingScreen updateLocation={this.updateLocation} updateDateTime={this.updateDateTime}></SettingScreen>
       </Swiper>
     );
   }

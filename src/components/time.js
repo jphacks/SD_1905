@@ -37,7 +37,7 @@ export class Time extends Component {
           onDateChange={
             (date) => {
               this.setState({ date: date })
-              this.props.updateDateInfo(date)
+              this.props.settingDate(date)
             }
           }
         />
@@ -63,7 +63,7 @@ export class Time extends Component {
           onDateChange={
             (time) => {
               this.setState({ time: time })
-              this.props.updateTimeInfo(time)
+              this.props.settingTime(time)
             }
           }
         />

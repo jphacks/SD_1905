@@ -19,34 +19,26 @@ export class SettingScreen extends React.Component {
       musicId: 3.141592
     }
   }
-  updateLocationInfo = () => { this.setState({}) }
-  updateDateInfo = (_date) => { this.setState({ date: _date }) }
-  updateTimeInfo = (_time) => { this.setState({ time: _time }) }
+  settingLocation = () => { this.setState({}) }
+  settingDate = (_date) => { this.setState({ date: _date }) }
+  settingTime = (_time) => { this.setState({ time: _time }) }
+  settingMusicId = (_musicId) => {this.setState({time: _musicId})}
   render() {
     return (
       <View style={styles.Setting}>
-        <View style={{ flex: 1, backgroundColor: '#0000FF', justifyContent: 'center', alignItems: 'center', margin: 10 }}>
-          <Text style={styles.text}>
-            {/* "state:"{this.state.date}/{this.state.time} */}
-            Setting
-          </Text>
-        </View >
         <View style={{ flex: 2, backgroundColor: '#FF00FF', justifyContent: 'center', alignItems: 'center', margin: 10 }}>
           <Text style={styles.text}>
             music
           </Text>
         </View >
         <View style={{ flex: 6, backgroundColor: '#FF0000', justifyContent: 'center', margin: 10 }}>
-          <Map></Map>
+          <Map settingLocation={this.settingLocation} updateLocation={this.props.updateLocation} updateDateTime={this.props.updateDateTime}></Map>
         </View >
-        <View style={{ flex: 2, backgroundColor: '#00FF00', justifyContent: 'center', alignItems: 'center', margin: 10 }}>
-          <Text style={styles.text}>
-            time
-          </Text>
-          <Time updateDateInfo={this.updateDateInfo} updateTimeInfo={this.updateTimeInfo}></Time>
+        <View style={{ flex: 2, backgroundColor: '#00FF00', justifyContent: 'space-evenly', alignItems: 'center', margin: 10 }}>
+          <Time settingDate={this.settingDate} settingTime={this.settingTime}></Time>
         </View >
 
-        <View style={{ flex: 1, backgroundColor: '#FFFFFF', justifyContent: 'center', alignItems: 'center', margin: 10 }}>
+        <View style={{ flex: 1, backgroundColor: '#FFFF00', justifyContent: 'center', alignItems: 'center', margin: 10 }}>
           <Button title="Save" onPress={this.storeData} />
         </View >
       </View>
