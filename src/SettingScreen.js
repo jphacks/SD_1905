@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
-import { Time } from './components/time.js';
+import { Time } from './components/Time.js';
+import { Map } from './components/Map.js'
 
 export class SettingScreen extends React.Component {
   constructor(props) {
@@ -35,10 +36,8 @@ export class SettingScreen extends React.Component {
             music
           </Text>
         </View >
-        <View style={{ flex: 6, backgroundColor: '#FF0000', justifyContent: 'center', alignItems: 'center', margin: 10 }}>
-          <Text style={styles.text}>
-            map
-          </Text>
+        <View style={{ flex: 6, backgroundColor: '#FF0000', justifyContent: 'center', margin: 10 }}>
+          <Map></Map>
         </View >
         <View style={{ flex: 2, backgroundColor: '#00FF00', justifyContent: 'center', alignItems: 'center', margin: 10 }}>
           <Text style={styles.text}>

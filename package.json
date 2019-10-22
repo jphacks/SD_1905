@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.6.2",
+    "@react-native-community/geolocation": "^2.0.2",
     "react": "16.9.0",
     "react-native": "0.61.2",
     "react-native-datepicker": "^1.7.2",
+    "react-native-maps": "0.26.1",
     "react-native-storage": "^1.0.1",
     "react-native-swiper": "^1.5.14"
   },
