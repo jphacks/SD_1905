@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Alert} from 'react-native';
+import { StyleSheet, Text, View, Button, Alert } from 'react-native';
 import { Time } from './components/Time.js';
 import { Map } from './components/Map.js'
 
@@ -22,7 +22,7 @@ export class SettingScreen extends React.Component {
   settingLocation = () => { this.setState({}) }
   settingDate = (_date) => { this.setState({ date: _date }) }
   settingTime = (_time) => { this.setState({ time: _time }) }
-  settingMusicId = (_musicId) => {this.setState({time: _musicId})}
+  settingMusicId = (_musicId) => { this.setState({ time: _musicId }) }
   render() {
     return (
       <View style={styles.Setting}>
@@ -40,6 +40,7 @@ export class SettingScreen extends React.Component {
 
         <View style={{ flex: 1, backgroundColor: '#FFFF00', justifyContent: 'center', alignItems: 'center', margin: 10 }}>
           <Button title="Save" onPress={this.storeData} />
+          <Button title="Save Dummy" onPress={this.storeDummy} />
         </View >
       </View>
     )
@@ -91,7 +92,71 @@ export class SettingScreen extends React.Component {
       .then(res => alert(res.length))
       .catch(err => console.warn(err))
   }
-
+  storeDummy = () => {
+    storage.save({
+      key:
+        'mapInfo',
+      data: [
+        {
+          id: Date.now().toString(),
+          time: {
+            date: "2016-05-15",
+            time: "8:16 PM"
+          },
+          place: {
+            latitude: 38.2559,
+            longitude: 140.845,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          },
+          musicId: 10
+        },
+        {
+          id: Date.now().toString(),
+          time: {
+            date: "2016-06-15",
+            time: "8:16 PM"
+          },
+          place: {
+            latitude: 38.2559,
+            longitude: 140.843,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          },
+          musicId: 20
+        }, 
+        {
+          id: Date.now().toString(),
+          time: {
+            date: "2016-07-15",
+            time: "8:16 PM"
+          },
+          place: {
+            latitude: 38.2570,
+            longitude: 140.845,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          },
+          musicId: 30
+        },
+        {
+          id: Date.now().toString(),
+          time: {
+            date: "2016-07-15",
+            time: "8:16 PM"
+          },
+          place: {
+            latitude: 38.2570,
+            longitude: 140.843,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          },
+          musicId: 40
+        },
+      ]
+    }
+    )
+  }
 }
 
 const styles = StyleSheet.create({
