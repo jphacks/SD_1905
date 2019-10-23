@@ -10,7 +10,6 @@ export class Map extends Component {
       latitude:38.255900,
       longitude:140.84240,
     };
-    this.markers = [];
     this.getCurrentPosition(this);
   }
 
@@ -34,43 +33,35 @@ export class Map extends Component {
       latitude: _latitude,
       longitude: _longitude
     });
-    this.props.updateLocation(_latitude, _longitude);
   }
 
   failToGetCurrentPosition = (error) => {
     console.warn(`ERROR(${error.code}): ${error.message}`);
   }
 
-  componentDidMount() {
-    this._interval = setInterval(() => {
-      this.getCurrentPosition(this);
-    },1000);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this._interval);
+  movePlace() {
+    this.getCurrentPosition(this);
   }
 
   render() {
     return (
-      <MapView
-        provider = {PROVIDER_DEFAULT}
-        style = {{flex: 1}}
-        initialRegion={{
-          latitude:this.state.latitude,
-          longitude:this.state.longitude,
-          latitudeDelta:LatitudeDelta,
-          longitudeDelta:LongitudeDelta,
-        }}
-        region={{
-          latitude:this.state.latitude,
-          longitude:this.state.longitude,
-          latitudeDelta:LatitudeDelta,
-          longitudeDelta:LongitudeDelta,
-        }}
-        showsUserLocation={true}
-        showsMyLocationButton={true}
-      />
+      <View style={{flex: 1}}>
+        <MapView
+          provider = {PROVIDER_DEFAULT}
+          style = {{flex: 1}}
+          region={{
+            latitude:this.state.latitude,
+            longitude:this.state.longitude,
+            latitudeDelta:LatitudeDelta,
+            longitudeDelta:LongitudeDelta,
+          }}
+          showsUserLocation={true}
+          showsMyLocationButton={true}
+        />
+        <View style={{height: 40}}>
+          <Button title="現在地へ移動" onPress={() => this.movePlace()} />
+        </View>
+      </View>
     );
   }
 }
