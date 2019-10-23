@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { StyleSheet, Text, View, Button } from 'react-native';
-import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 
 export class Map extends Component {
@@ -9,6 +9,7 @@ export class Map extends Component {
     this.state = {
       latitude:38.255900,
       longitude:140.84240,
+      markers: []
     };
     this.getCurrentPosition(this);
   }
@@ -43,6 +44,10 @@ export class Map extends Component {
     this.getCurrentPosition(this);
   }
 
+  removeMarkers() {
+    this.setState({markers: []});
+  }
+
   render() {
     return (
       <View style={{flex: 1}}>
@@ -57,9 +62,34 @@ export class Map extends Component {
           }}
           showsUserLocation={true}
           showsMyLocationButton={true}
-        />
-        <View style={{height: 40}}>
+          onLongPress={(coords, pos) => {
+              const marker = {
+                latlng: {
+                  latitude: coords.nativeEvent.coordinate.latitude,
+                  longitude: coords.nativeEvent.coordinate.longitude
+                },
+                title: "",
+                description: ""
+              }
+              this.state.markers.push(marker);
+              this.setState({
+                latitude: coords.nativeEvent.coordinate.latitude,
+                longitude: coords.nativeEvent.coordinate.longitude
+              });
+            }
+          }
+          >
+          {this.state.markers.map(marker => (
+            <Marker
+              coordinate={marker.latlng}
+              title={marker.title}
+              description={marker.description}
+            />
+          ))}
+        </MapView>
+        <View style={{flexDirection:"row", justifyContent:"space-evenly", height: 40}}>
           <Button title="現在地へ移動" onPress={() => this.movePlace()} />
+          <Button title="ピンを削除" onPress={() => this.removeMarkers()} />
         </View>
       </View>
     );
