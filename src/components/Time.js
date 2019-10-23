@@ -6,7 +6,7 @@ export class Time extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      date: "2018-10-27",
+      date: "2019-10-27",
       time: "0:00 PM"
 
     }
@@ -75,10 +75,10 @@ export class Time extends Component {
 
 const styles = StyleSheet.create({
   Pickers: {
-    // flexDirection: "colmun",
-    justifyContent: 'center',
-    // alignItems: 'center',
     backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    // flexDirection: "colmun",
+    // alignItems: 'center',
     // marginHorizontal:100,
     // marginVertical:300
   }

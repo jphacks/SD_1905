@@ -15,6 +15,7 @@ export class MainScreen extends React.Component {
       markers: []
     };
     this.getCurrentPosition(this);
+    this.loadMarkers()
   }
 
   getCurrentPosition = (obj) => {
@@ -42,6 +43,33 @@ export class MainScreen extends React.Component {
   failToGetCurrentPosition = (error) => {
     console.warn(`ERROR(${error.code}): ${error.message}`);
   }
+
+  loadMarkers = () => {
+    storage
+      .load({ key: 'mapInfo' })
+      .then(res => {
+        newMarkers = [];
+        console.log('informations')
+        console.log(res)
+        console.log('markers')
+        res.map(obj => {
+          newMarkers.push(
+            {
+              latlng: {
+                latitude: obj.place.latitude,
+                longitude: obj.place.longitude
+              },
+              title: "information",
+              description: obj.musicId
+            }
+          )
+        })
+        console.log(newMarkers)
+        this.setState({ markers: newMarkers })
+      })
+      .catch(err => console.warn(err))
+  }
+
   render() {
     return (
       <View style={styles.Main}>
@@ -65,56 +93,15 @@ export class MainScreen extends React.Component {
             />
           ))}
         </MapView>
-        <Button title="Load:" onPress={this.loadData} />
-        <Button title="Load Markers:" onPress={this.loadMarkers} />
+        <Button title="Load Markers" onPress={this.loadMarkers} />
       </View>
     )
   }
-
-  loadMarkers = () => {
-    storage
-      .load({ key: 'mapInfo' })
-      .then(res => {
-        newMarkers = [];
-
-        res.map(obj => {
-          newMarkers.push(
-            {
-              latlng: {
-                latitude: obj.place.latitude,
-                longitude: obj.place.longitude
-              },
-              title: "information",
-              description: obj.musicId
-            }
-          )
-        })
-        console.log(newMarkers)
-        this.setState({ markers: newMarkers })
-      })
-      .catch(err => console.warn(err))
-  }
-
-  loadData = () => {
-    storage
-      .load({ key: 'mapInfo' })
-      .then(res => {
-        console.log(res)
-      })
-      .catch(err => console.warn(err))
-
-  }
 }
 
-const LatitudeDelta = 0.00520;
-const LongitudeDelta = 0.00520;
+const LatitudeDelta = 0.00720;
+const LongitudeDelta = 0.00720;
 const styles = StyleSheet.create({
-  slide: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#9DD6EB',
-  },
   text: {
     color: '#FFFFFF',
     fontSize: 30,
@@ -123,10 +110,4 @@ const styles = StyleSheet.create({
   Main: {
     flex: 1
   },
-  Setting: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#afa598'
-  }
 })
