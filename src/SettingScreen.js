@@ -8,18 +8,18 @@ export class SettingScreen extends React.Component {
     super(props)
     this.state = {
       // location info
-      latitude: 37.78825,
-      longitude: -122.4324,
+      latitude: 38.2559,
+      longitude: 140.845,
       latitudeDelta: 0.0922,
       longitudeDelta: 0.0421,
       // time info
       date: "2016-05-15",
       time: "8:16 PM",
       // music info
-      musicId: 3.141592
+      musicId: "new data"
     }
   }
-  settingLocation = () => { this.setState({}) }
+  settingLocation = (_lat, _lon) => { this.setState({latitude: _lat, longitude: _lon}) }
   settingDate = (_date) => { this.setState({ date: _date }) }
   settingTime = (_time) => { this.setState({ time: _time }) }
   settingMusicId = (_musicId) => { this.setState({ time: _musicId }) }
@@ -73,12 +73,10 @@ export class SettingScreen extends React.Component {
         this.tmp = null;
         console.warn(err);
       })
-    if (this.tmp == null) {
-      newData = newData
-    }
-    else {
+    if (this.tmp != null) {
       newData = newData.concat(this.tmp)
     }
+    console.log(newData)
     storage.save({
       key:
         'mapInfo',
@@ -93,68 +91,55 @@ export class SettingScreen extends React.Component {
       .catch(err => console.warn(err))
   }
   storeDummy = () => {
-    storage.save({
-      key:
-        'mapInfo',
-      data: [
-        {
-          id: Date.now().toString(),
-          time: {
-            date: "2016-05-15",
-            time: "8:16 PM"
+    storage.save(
+      {
+        key:
+          'mapInfo',
+        data: [
+          {
+            id: Date.now().toString(),
+            time: {
+              date: "2016-05-15",
+              time: "8:16 PM"
+            },
+            place: {
+              latitude: 38.2559,
+              longitude: 140.845,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            },
+            musicId: "kokoro"
           },
-          place: {
-            latitude: 38.2559,
-            longitude: 140.845,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
+          {
+            id: Date.now().toString(),
+            time: {
+              date: "2016-06-15",
+              time: "8:16 PM"
+            },
+            place: {
+              latitude: 38.2559,
+              longitude: 140.843,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            },
+            musicId: "kimigayo"
           },
-          musicId: 10
-        },
-        {
-          id: Date.now().toString(),
-          time: {
-            date: "2016-06-15",
-            time: "8:16 PM"
+          {
+            id: Date.now().toString(),
+            time: {
+              date: "2016-07-15",
+              time: "8:16 PM"
+            },
+            place: {
+              latitude: 38.2570,
+              longitude: 140.843,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            },
+            musicId: "tokuninaidesu"
           },
-          place: {
-            latitude: 38.2559,
-            longitude: 140.843,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          },
-          musicId: 20
-        }, 
-        {
-          id: Date.now().toString(),
-          time: {
-            date: "2016-07-15",
-            time: "8:16 PM"
-          },
-          place: {
-            latitude: 38.2570,
-            longitude: 140.845,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          },
-          musicId: 30
-        },
-        {
-          id: Date.now().toString(),
-          time: {
-            date: "2016-07-15",
-            time: "8:16 PM"
-          },
-          place: {
-            latitude: 38.2570,
-            longitude: 140.843,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          },
-          musicId: 40
-        },
-      ]
-    }
+        ]
+      }
     )
   }
 }

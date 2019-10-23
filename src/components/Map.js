@@ -76,6 +76,7 @@ export class Map extends Component {
                 latitude: coords.nativeEvent.coordinate.latitude,
                 longitude: coords.nativeEvent.coordinate.longitude
               });
+              this.props.settingLocation(coords.nativeEvent.coordinate.latitude, coords.nativeEvent.coordinate.longitude)
             }
           }
           >
