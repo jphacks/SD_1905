@@ -11,12 +11,19 @@ export class Map extends Component {
       longitude:140.84240,
     };
     this.markers = [];
+    this.getCurrentPosition(this);
   }
 
   getCurrentPosition = (obj) => {
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 1000,
+      maximumAge: 0
+    };
     Geolocation.getCurrentPosition(
       obj.successToGetCurrentPosition,
-      obj.failToGetCurrentPosition
+      obj.failToGetCurrentPosition,
+      options
     );
   }
 
@@ -34,14 +41,10 @@ export class Map extends Component {
     console.warn(`ERROR(${error.code}): ${error.message}`);
   }
 
-  componentWillMount() {
-    this.getCurrentPosition(this);
-  }
-
   componentDidMount() {
     this._interval = setInterval(() => {
       this.getCurrentPosition(this);
-    },5000);
+    },1000);
   }
 
   componentWillUnmount() {
