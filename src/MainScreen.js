@@ -18,8 +18,17 @@ export class MainScreen extends React.Component {
       longitude: 140.84240,
       markers: []
     };
-    setTimeout(() => {this.getCurrentPosition(this)}, 1000);
+    this.latitude = 38.255900;
+    this.longitude = 140.84240;
+    setTimeout(() => {this.getCurrentPosition(this); this.fetchLatLong();}, 1000);
     this.loadMarkers()
+  }
+
+  fetchLatLong = () => {
+    this.setState({
+      latitude: this.latitude,
+      longitude: this.longitude
+    })
   }
 
   getCurrentPosition = (obj) => {
@@ -29,26 +38,21 @@ export class MainScreen extends React.Component {
       maximumAge: 0
     };
     Geolocation.getCurrentPosition(
-      obj.successToGetCurrentPosition,
-      obj.failToGetCurrentPosition,
+      (position) => {
+        const _latitude = position.coords.latitude;
+        const _longitude = position.coords.longitude;
+        obj.latitude = _latitude;
+        obj.longitude = _longitude;
+      },
+      (error) => {
+        console.warn(`ERROR(${error.code}): ${error.message}`);
+      },
       options
     );
   }
 
-  successToGetCurrentPosition = (position) => {
-    const _latitude = position.coords.latitude;
-    const _longitude = position.coords.longitude;
-    this.setState({
-      latitude: _latitude,
-      longitude: _longitude
-    });
-  }
-
-  failToGetCurrentPosition = (error) => {
-    console.warn(`ERROR(${error.code}): ${error.message}`);
-  }
-
   loadMarkers = () => {
+    this.fetchLatLong();
     storage
       .load({ key: 'mapInfo' })
       .then(res => {
@@ -82,10 +86,10 @@ export class MainScreen extends React.Component {
     }
   }
   checker(){
-    // this.getCurrentPosition(this);
-    console.log('you\'re @ (latlng) '+this.state.latitude+'/'+this.state.longitude);
-    const c_lat=38.25451378490567;
-    const c_lng=140.84350658013643;
+    this.getCurrentPosition(this);
+    console.log('you\'re @ (latlng) '+this.latitude+'/'+this.longitude);
+    const c_lat=this.latitude;
+    const c_lng=this.longitude;
     storage
     .load({ key: 'mapInfo' })
     .then(res => {
