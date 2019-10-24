@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Alert, ScrollView, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Alert, ScrollView, Dimensions } from 'react-native';
+import { Button } from 'react-native-elements';
 import { Marker } from 'react-native-maps';
 import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
@@ -156,6 +157,10 @@ export class MainScreen extends React.Component {
             />
           ))}
         </MapView>
+        <View style={{position:'absolute', flexDirection:"row", left: 0, right: 0, bottom: 20, justifyContent: 'space-evenly'}}>
+          <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="現在地へ移動" onPress={() => {this.getCurrentPosition(this);this.fetchLatLong()} } />
+          <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="ピンを削除" />
+        </View>
         <Modal style={styles.modal} position={"bottom"} ref={"modal"} swipeArea={20}>
           <ScrollView width={screen.width}>
             <SettingScreen closeModal={this.closeModal} loadMarkers={this.loadMarkers} lat={this.state.latitude} lng={this.state.longitude}></SettingScreen>
