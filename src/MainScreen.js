@@ -59,8 +59,8 @@ export class MainScreen extends React.Component {
                 latitude: obj.place.latitude,
                 longitude: obj.place.longitude
               },
-              title: "information",
-              description: obj.musicId
+              title: "♪ "+obj.musicId,
+              description:"date:"+ obj.time.date + ' time: ' + obj.time.time
             }
           )
         })

@@ -16,7 +16,7 @@ export class SettingScreen extends React.Component {
       date: "2016-05-15",
       time: "8:16 PM",
       // music info
-      musicId: "new data"
+      musicId: "your world is"
     }
   }
 
