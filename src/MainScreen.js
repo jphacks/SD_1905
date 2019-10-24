@@ -18,7 +18,7 @@ export class MainScreen extends React.Component {
       longitude: 140.84240,
       markers: []
     };
-    this.getCurrentPosition(this);
+    setTimeout(() => {this.getCurrentPosition(this)}, 1000);
     this.loadMarkers()
   }
 
