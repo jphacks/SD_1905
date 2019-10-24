@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
+import { Button } from 'react-native-elements';
 import Geolocation from '@react-native-community/geolocation';
 
 export class Map extends Component {
@@ -88,9 +89,9 @@ export class Map extends Component {
             />
           ))}
         </MapView>
-        <View style={{flexDirection:"row", justifyContent:"space-evenly", height: 40}}>
-          <Button title="現在地へ移動" onPress={() => this.movePlace()} />
-          <Button title="ピンを削除" onPress={() => this.removeMarkers()} />
+        <View style={{position:'absolute', flexDirection:"row", left: 0, right: 0, bottom: 20, justifyContent: 'space-evenly'}}>
+          <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="現在地へ移動" onPress={() => this.movePlace()} />
+          <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="ピンを削除" onPress={() => this.removeMarkers()} />
         </View>
       </View>
     );
