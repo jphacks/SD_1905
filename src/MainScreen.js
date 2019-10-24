@@ -1,10 +1,14 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Alert } from 'react-native';
+import { StyleSheet, Text, View, Button, Alert, ScrollView, Dimensions } from 'react-native';
 import { Marker } from 'react-native-maps';
 import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import { throwStatement } from '@babel/types';
 import { Map } from './components/Map.js'
+import Modal from 'react-native-modalbox';
+import { SettingScreen } from './SettingScreen.js';
+
+const screen = Dimensions.get('window');
 
 export class MainScreen extends React.Component {
   constructor(props) {
@@ -133,6 +137,12 @@ export class MainScreen extends React.Component {
           ))}
         </MapView>
         <Button title="Load Markers" onPress={this.loadMarkers} />
+        <Button title="Modal" onPress={() => this.refs.modal.open()} />
+        <Modal style={styles.modal} position={"bottom"} ref={"modal"} swipeArea={20}>
+          <ScrollView width={screen.width}>
+            <SettingScreen></SettingScreen>
+          </ScrollView>
+        </Modal>
       </View>
     )
   }
@@ -142,11 +152,18 @@ const LatitudeDelta = 0.00720;
 const LongitudeDelta = 0.00720;
 const styles = StyleSheet.create({
   text: {
-    color: '#FFFFFF',
+    // color: '#FFFFFF',
     fontSize: 30,
     fontWeight: 'bold',
   },
   Main: {
     flex: 1
   },
+
+  modal: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 500,
+  },
+
 })
