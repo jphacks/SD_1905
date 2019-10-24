@@ -156,8 +156,6 @@ export class MainScreen extends React.Component {
             />
           ))}
         </MapView>
-        <Button title="Load Markers" onPress={this.loadMarkers} />
-        <Button title="Modal" onPress={() => this.refs.modal.open()} />
         <Modal style={styles.modal} position={"bottom"} ref={"modal"} swipeArea={20}>
           <ScrollView width={screen.width}>
             <SettingScreen closeModal={this.closeModal} loadMarkers={this.loadMarkers} lat={this.state.latitude} lng={this.state.longitude}></SettingScreen>
