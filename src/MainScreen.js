@@ -20,7 +20,9 @@ export class MainScreen extends React.Component {
     };
     this.latitude = 38.255900;
     this.longitude = 140.84240;
-    setTimeout(() => {this.getCurrentPosition(this); this.fetchLatLong();}, 1000);
+    console.log("state: " + this.state.latitude + ' ' + this.state.longitude)
+    console.log("val: " + this.latitude + ' ' + this.longitude)
+    setTimeout(() => { this.getCurrentPosition(this); this.fetchLatLong(); }, 2000);
     this.loadMarkers()
   }
 
@@ -52,14 +54,11 @@ export class MainScreen extends React.Component {
   }
 
   loadMarkers = () => {
-    this.fetchLatLong();
+    // this.fetchLatLong();
     storage
       .load({ key: 'mapInfo' })
       .then(res => {
         newMarkers = [];
-        console.log('informations')
-        console.log(res)
-        console.log('markers')
         res.map(obj => {
           newMarkers.push(
             {
@@ -67,54 +66,62 @@ export class MainScreen extends React.Component {
                 latitude: obj.place.latitude,
                 longitude: obj.place.longitude
               },
-              title: "♪ "+obj.musicId,
-              description:"date:"+ obj.time.date + ' time: ' + obj.time.time
+              title: "♪ " + obj.musicId,
+              description: "date:" + obj.time.date + ' time: ' + obj.time.time
             }
           )
         })
+        console.log('markers')
         console.log(newMarkers)
         this.setState({ markers: newMarkers })
       })
       .catch(err => console.warn(err))
   }
-  isNear(obj, c_lat, c_lng){
-    if(Math.abs( (obj.place.latitude-c_lat) < 0.00001) && (Math.abs(obj.place.longitude-c_lng)<0.00001 )){
+
+  isNear(obj, c_lat, c_lng) {
+    if (Math.abs((obj.place.latitude - c_lat) < 0.00001) && (Math.abs(obj.place.longitude - c_lng) < 0.00001)) {
       return true;
     }
-    else{
+    else {
       return false;
     }
   }
-  checker(){
+
+  checker() {
     this.getCurrentPosition(this);
-    console.log('you\'re @ (latlng) '+this.latitude+'/'+this.longitude);
-    const c_lat=this.latitude;
-    const c_lng=this.longitude;
+    console.log('you\'re @ (latlng) ' + this.latitude + '/' + this.longitude);
+    const c_lat = this.latitude;
+    const c_lng = this.longitude;
     storage
-    .load({ key: 'mapInfo' })
-    .then(res => {
-      console.log('informations')
-      console.log(res)
-      res.map(obj => {
-        if( this.isNear(obj, c_lat, c_lng) ){
-          const musicId=obj.musicId;
-          this.setState({musicId:obj.musicId})
-          // musicPlay(obj.musicId)
-          // Alert.alert(obj.musicId)
-          console.log('hit!! '+obj.musicId)
-        }
-        else{
-          console.log('not hit ...')
-        }
+      .load({ key: 'mapInfo' })
+      .then(res => {
+        console.log('informations')
+        console.log(res)
+        res.map(obj => {
+          if (this.isNear(obj, c_lat, c_lng)) {
+            const musicId = obj.musicId;
+            this.setState({ musicId: obj.musicId })
+            // musicPlay(obj.musicId)
+            // Alert.alert(obj.musicId)
+            console.log('hit!! ' + obj.musicId)
+          }
+          else {
+            console.log('not hit ...')
+          }
+        })
       })
-    })
-    .catch(err => console.warn(err)) 
+      .catch(err => console.warn(err))
   }
-//  ComponentWillMountで初期化するらしい．調べてみたい．
-  componentDidMount(){
+
+  //  ComponentWillMountで初期化するらしい．調べてみたい．
+  componentDidMount() {
     this.interval = setInterval(() => {
       this.checker()
     }, 5000);
+  }
+
+  closeModal = () => {
+    this.refs.modal.close();
   }
 
   render() {
@@ -131,6 +138,15 @@ export class MainScreen extends React.Component {
           }}
           showsUserLocation={true}
           showsMyLocationButton={true}
+          onLongPress={(coords, pos) => {
+            this.setState({
+              latitude: coords.nativeEvent.coordinate.latitude,
+              longitude: coords.nativeEvent.coordinate.longitude
+            });
+            this.getCurrentPosition(this)
+            this.refs.modal.open();
+          }
+          }
         >
           {this.state.markers.map(marker => (
             <Marker
@@ -144,7 +160,7 @@ export class MainScreen extends React.Component {
         <Button title="Modal" onPress={() => this.refs.modal.open()} />
         <Modal style={styles.modal} position={"bottom"} ref={"modal"} swipeArea={20}>
           <ScrollView width={screen.width}>
-            <SettingScreen></SettingScreen>
+            <SettingScreen closeModal={this.closeModal} loadMarkers={this.loadMarkers} lat={this.state.latitude} lng={this.state.longitude}></SettingScreen>
           </ScrollView>
         </Modal>
       </View>

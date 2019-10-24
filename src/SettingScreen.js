@@ -8,21 +8,21 @@ export class SettingScreen extends React.Component {
     super(props)
     this.state = {
       // location info
-      latitude: 38.2559,
-      longitude: 140.845,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
+      latitude: this.props.lat,
+      longitude: this.props.lng,
       // time info
       date: "2016-05-15",
       time: "8:16 PM",
       // music info
       musicId: "your world is"
     }
+    console.log('new setting screen')
+    console.log(this.state.latitude + ' ' + this.state.longitude);
   }
 
   settingLocation = (_lat, _lon) => { this.setState({ latitude: _lat, longitude: _lon }) }
 
-  settingDate = (_date) => { this.setState({ date: _date }) }
+  settingDate = (_date) => { this.setState({ date: _date }); console.log('date set'); }
 
   settingTime = (_time) => { this.setState({ time: _time }) }
 
@@ -40,8 +40,6 @@ export class SettingScreen extends React.Component {
         place: {
           latitude: this.state.latitude,
           longitude: this.state.longitude,
-          latitudeDelta: this.state.latitudeDelta,
-          longitudeDelta: this.state.longitudeDelta,
         },
         musicId: this.state.musicId
       }
@@ -59,12 +57,13 @@ export class SettingScreen extends React.Component {
     if (this.tmp != null) {
       newData = newData.concat(this.tmp)
     }
-    console.log(newData)
     storage.save({
       key:
         'mapInfo',
       data: newData
     })
+    this.props.loadMarkers();
+    this.props.closeModal();
     Alert.alert("Success", "set the music in your world !!!")
   }
 
@@ -76,9 +75,9 @@ export class SettingScreen extends React.Component {
             select music
           </Text>
         </View >
-        <View style={{ flex: 6, justifyContent: 'center', margin: 0 }}>
+        {/* <View style={{ flex: 6, justifyContent: 'center', margin: 0 }}>
           <Map settingLocation={this.settingLocation}></Map>
-        </View >
+        </View > */}
         <View style={{ flex: 1.3, backgroundColor: '#00FF00', justifyContent: 'space-evenly', alignItems: 'center', margin: 0 }}>
           <Time settingDate={this.settingDate} settingTime={this.settingTime}></Time>
         </View >

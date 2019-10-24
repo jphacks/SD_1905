@@ -30,10 +30,7 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <Swiper showsButtons={true} loop={false} showsButtons={true} shoePagenation={false}>
         <MainScreen></MainScreen>
-        <SettingScreen></SettingScreen>
-      </Swiper>
     );
   }
 }
