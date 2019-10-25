@@ -5,6 +5,7 @@ import Modal from 'react-native-modalbox';
 import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Marker } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
+import { getDistance } from 'geolib';const nearDist = 40;
 
 import { SettingScreen } from './SettingScreen.js';
 
@@ -131,7 +132,12 @@ export class MainScreen extends React.Component {
   }
 
   isNear(obj, c_lat, c_lng) {
-    if (Math.abs((obj.place.latitude - c_lat) < 0.00001) && (Math.abs(obj.place.longitude - c_lng) < 0.00001)) {
+    const dist = getDistance(
+      {latitude: obj.place.latitude, longitude: obj.place.longitude},
+      {latitude: c_lat, longitude: c_lng}
+    );
+    console.log(dist);
+    if(dist <= nearDist){
       return true;
     }
     else {
@@ -181,11 +187,6 @@ export class MainScreen extends React.Component {
   }
 
   //  ComponentWillMountで初期化するらしい．調べてみたい．
-  componentDidMount() {
-    this.interval = setInterval(() => {
-      // this.checker()
-    }, 5000);
-  }
 
   movePlace = () => {
     this.getCurrentPosition(this); this.fetchLatLong();
@@ -197,6 +198,12 @@ export class MainScreen extends React.Component {
         longitudeDelta: 0.00520
       })
     }, 500)
+  }
+
+  componentDidMount() {
+    this.interval = setInterval(() => {
+      // this.checker()
+    }, 10000);
   }
 
   render() {
