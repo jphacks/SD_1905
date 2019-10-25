@@ -58,8 +58,8 @@ export class Map extends Component {
           region={{
             latitude:this.state.latitude,
             longitude:this.state.longitude,
-            latitudeDelta:LatitudeDelta,
-            longitudeDelta:LongitudeDelta,
+            // latitudeDelta:LatitudeDelta,
+            // longitudeDelta:LongitudeDelta,
           }}
           showsUserLocation={true}
           showsMyLocationButton={true}

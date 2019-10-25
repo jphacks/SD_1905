@@ -1,38 +1,48 @@
 import React from 'react';
 import { StyleSheet, Text, View, Alert, ScrollView, Dimensions } from 'react-native';
 import { Button } from 'react-native-elements';
-import { Marker } from 'react-native-maps';
-import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
-import Geolocation from '@react-native-community/geolocation';
-import { throwStatement } from '@babel/types';
-import { Map } from './components/Map.js'
 import Modal from 'react-native-modalbox';
+import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
+import { Marker } from 'react-native-maps';
+import Geolocation from '@react-native-community/geolocation';
+
 import { SettingScreen } from './SettingScreen.js';
 
 const screen = Dimensions.get('window');
-
 export class MainScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       latitude: 38.255900,
       longitude: 140.84240,
-      latitudeDelta:0.00520,
-      longitudeDelta:0.00520,
+      latitudeDelta: 0.00520,
+      longitudeDelta: 0.00520,
+      tmpLatitude: null,
+      tmpLongitude: null,
       markers: []
     };
     this.camera = {
       latitude: 0,
       longitude: 0,
-      latitudeDelta: 0.00520,
-      longitudeDelta: 0.00520
+      latitudeDelta: 0.11620,
+      longitudeDelta: 0.11620
     };
     this.latitude = 38.255900;
     this.longitude = 140.84240;
-    console.log("state: " + this.state.latitude + ' ' + this.state.longitude)
-    console.log("val: " + this.latitude + ' ' + this.longitude)
-    setTimeout(() => { this.getCurrentPosition(this); this.fetchLatLong(); }, 2000);
+    // setTimeout(() => { this.getCurrentPosition(this); this.fetchLatLong(); }, 2000);
     this.loadMarkers()
+  }
+  setCameraPosition = (region) => {
+    this.camera = region
+  }
+
+  syncCameraPosition = () => {
+    this.setState({
+      latitude: this.camera.latitude,
+      longitude: this.camera.longitude,
+      latitudeDelta: this.camera.latitudeDelta,
+      longitudeDelta: this.camera.longitudeDelta,
+    })
   }
 
   fetchLatLong = () => {
@@ -42,18 +52,20 @@ export class MainScreen extends React.Component {
     })
   }
 
-  getCurrentPosition = (obj) => {
+  getCurrentPosition(obj) {
     const options = {
       enableHighAccuracy: true,
       timeout: 1000,
       maximumAge: 0
     };
     Geolocation.getCurrentPosition(
+      // Success
       (position) => {
-        const {latitude, longitude} = position.coords
+        const { latitude, longitude } = position.coords
         obj.latitude = latitude;
         obj.longitude = longitude;
       },
+      // Failed
       (error) => {
         console.warn(`ERROR(${error.code}): ${error.message}`);
       },
@@ -63,7 +75,7 @@ export class MainScreen extends React.Component {
 
   loadMarkers = () => {
     // this.fetchLatLong();
-    storage
+    global.storage
       .load({ key: 'mapInfo' })
       .then(res => {
         newMarkers = [];
@@ -81,45 +93,39 @@ export class MainScreen extends React.Component {
             }
           )
         })
-        // console.log('markers')
-        // console.log(newMarkers)
         this.setState({ markers: newMarkers })
       })
       .catch(err => console.warn(err))
   }
 
-  storeNewdata(obj) {
-    console.log("push new data ");
-    console.log(obj);
-    tmp = [];
+  storeNewdata = (obj) => {
     global.storage
       .load({ key: 'mapInfo' })
       .then(res => {
-        tmp = res;
-        console.log('storage last datas');
-        console.log(tmp);
-        tmp = tmp.concat(obj);
-        console.log("created data (obj)");
-        console.log(tmp);
+        ret = res;
+        ret = res.concat(obj);
+        // console.log("created data (obj)");
+        // console.log(tmp);
         global.storage.save({
           key:
             'mapInfo',
-          data: tmp
+          data: ret
         })
           .then(() => {
             this.loadMarkers();
           })
       })
       .catch(err => {
-        global.storage.save({
-          key:
-            'mapInfo',
-          data: obj 
-        })
-        .then( ()=>{
-          this.loadMarkers();
-        }
+        global.storage.save(
+          {
+            key:
+              'mapInfo',
+            data: obj
+          }
         )
+          .then(() => {
+            this.loadMarkers();
+          });
         console.warn(err);
       })
   }
@@ -136,7 +142,7 @@ export class MainScreen extends React.Component {
   isTime(obj) {
     let date = null;
     let time = null;
-    if (obj.time.date = date && obj.time.time == time) {
+    if ((obj.time.date = date && obj.time.time == time) || 1) {
       return true;
     }
     else {
@@ -155,11 +161,11 @@ export class MainScreen extends React.Component {
         console.log('informations')
         console.log(res)
         res.map(obj => {
-          if (this.isNear(obj, c_lat, c_lng)) {
+          if (this.isNear(obj, c_lat, c_lng) && this.isTime(obj)) {
             const musicId = obj.musicId;
             this.setState({ musicId: obj.musicId })
             // musicPlay(obj.musicId)
-            // Alert.alert(obj.musicId)
+            Alert.alert(obj.musicId)
             console.log('hit!! ' + obj.musicId)
           }
           else {
@@ -181,6 +187,18 @@ export class MainScreen extends React.Component {
     }, 5000);
   }
 
+  movePlace = () => {
+    this.getCurrentPosition(this); this.fetchLatLong();
+    setTimeout(() => {
+      this.setCameraPosition({
+        latitude: this.state.latitude,
+        longitude: this.state.longitude,
+        latitudeDelta: 0.00520,
+        longitudeDelta: 0.00520
+      })
+    }, 500)
+  }
+
   render() {
     return (
       <View style={styles.Main}>
@@ -190,17 +208,19 @@ export class MainScreen extends React.Component {
           region={{
             latitude: this.state.latitude,
             longitude: this.state.longitude,
-            latitudeDelta: LatitudeDelta,
-            longitudeDelta: LongitudeDelta,
+            latitudeDelta: this.state.latitudeDelta,
+            longitudeDelta: this.state.longitudeDelta,
           }}
           showsUserLocation={true}
           showsMyLocationButton={true}
+          onRegionChangeComplete={(position) => { this.setCameraPosition(position); }}
           onLongPress={(coords, pos) => {
             this.setState({
-              latitude: coords.nativeEvent.coordinate.latitude,
-              longitude: coords.nativeEvent.coordinate.longitude
+              tmpLatitude: coords.nativeEvent.coordinate.latitude,
+              tmpLongitude: coords.nativeEvent.coordinate.longitude
             });
-            this.getCurrentPosition(this)
+            this.syncCameraPosition();
+            // this.getCurrentPosition(this)
             this.refs.modal.open();
           }
           }
@@ -216,11 +236,15 @@ export class MainScreen extends React.Component {
         </MapView>
         <View style={{ position: 'absolute', flexDirection: "row", left: 0, right: 0, bottom: 20, justifyContent: 'space-evenly' }}>
           <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="現在地へ移動" onPress={() => { this.getCurrentPosition(this); this.fetchLatLong() }} />
-          <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="ピンを削除" onPress={this.loadMarkers} />
+          <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="forDebug" />
         </View>
         <Modal style={styles.modal} position={"bottom"} ref={"modal"} swipeArea={20}>
           <ScrollView width={screen.width}>
-            <SettingScreen storeNewData={this.storeNewdata} closeModal={this.closeModal} loadMarkers={this.loadMarkers} lat={this.state.latitude} lng={this.state.longitude}></SettingScreen>
+            <SettingScreen
+              storeNewData={this.storeNewdata}
+              closeModal={this.closeModal}
+              loadMarkers={this.loadMarkers}
+              lat={this.state.tmpLatitude} lng={this.state.tmpLongitude}/>
           </ScrollView>
         </Modal>
       </View>
@@ -228,8 +252,6 @@ export class MainScreen extends React.Component {
   }
 }
 
-const LatitudeDelta = 0.00720;
-const LongitudeDelta = 0.00720;
 const styles = StyleSheet.create({
   text: {
     // color: '#FFFFFF',
