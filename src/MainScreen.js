@@ -63,6 +63,7 @@ export class MainScreen extends React.Component {
         res.map(obj => {
           newMarkers.push(
             {
+              // key: Date.now(),
               id: obj.id,
               latlng: {
                 latitude: obj.place.latitude,
@@ -103,10 +104,18 @@ export class MainScreen extends React.Component {
           })
       })
       .catch(err => {
+        global.storage.save({
+          key:
+            'mapInfo',
+          data: obj 
+        })
+        .then( ()=>{
+          this.loadMarkers();
+        }
+        )
         console.warn(err);
       })
   }
-
 
   isNear(obj, c_lat, c_lng) {
     if (Math.abs((obj.place.latitude - c_lat) < 0.00001) && (Math.abs(obj.place.longitude - c_lng) < 0.00001)) {
@@ -118,7 +127,14 @@ export class MainScreen extends React.Component {
   }
 
   isTime(obj) {
-
+    let date = null;
+    let time = null;
+    if (obj.time.date = date && obj.time.time == time) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 
   checker() {
@@ -158,7 +174,6 @@ export class MainScreen extends React.Component {
     }, 5000);
   }
 
-
   render() {
     return (
       <View style={styles.Main}>
@@ -194,7 +209,7 @@ export class MainScreen extends React.Component {
         </MapView>
         <View style={{ position: 'absolute', flexDirection: "row", left: 0, right: 0, bottom: 20, justifyContent: 'space-evenly' }}>
           <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="現在地へ移動" onPress={() => { this.getCurrentPosition(this); this.fetchLatLong() }} />
-          <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="ピンを削除" />
+          <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="ピンを削除" onPress={this.loadMarkers} />
         </View>
         <Modal style={styles.modal} position={"bottom"} ref={"modal"} swipeArea={20}>
           <ScrollView width={screen.width}>
