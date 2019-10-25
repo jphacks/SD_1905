@@ -63,6 +63,7 @@ export class MainScreen extends React.Component {
         res.map(obj => {
           newMarkers.push(
             {
+              id:obj.key,
               latlng: {
                 latitude: obj.place.latitude,
                 longitude: obj.place.longitude
