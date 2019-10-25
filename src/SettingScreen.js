@@ -1,8 +1,18 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Alert } from 'react-native';
+import { StyleSheet, Text, View, Alert, ScrollView, Dimensions } from 'react-native';
+import { Button } from 'react-native-elements';
+import Modal from 'react-native-modalbox';
 import { Time } from './components/Time.js';
-import { Map } from './components/Map.js'
-
+const musicData =[];
+const screen = Dimensions.get('window');
+for(let i=0; i < 30; i++){ //テストデータ作成
+  musicData.push({
+    title: "musicTitle"+i,
+    artist: "artist"+i,
+    genre: "musicGenre"+i,
+    musicAlbum: "Album"+i,
+  });
+}
 export class SettingScreen extends React.Component {
   constructor(props) {
     super(props)
@@ -48,18 +58,27 @@ export class SettingScreen extends React.Component {
     this.props.closeModal();
     Alert.alert("Success", "set the music in your world !!!")
   }
-
+  setMusic = (num) => { this.setState({musicId: musicData[num].title}); }
   render() {
+    let trackJSX = [];
+    for(let i=0; i < musicData.length; i++){
+      trackJSX.push(
+        <Button title={"title: "+ musicData[i].title + " artist: "+ musicData[i].artist} onPress={this.setMusic.bind(this,i)} />
+      );
+    }
     return (
       <View style={styles.Setting}>
         <View style={{ flex: 1, backgroundColor: '#FF00FF', justifyContent: 'center', alignItems: 'center', margin: 0 }}>
-          <Text style={styles.text}>
-            select music
-          </Text>
+        <Button title={this.state.musicId} onPress={() => this.refs.modal.open()} />
+        <Modal style={styles.modal} position={"center"} backdrop={true} ref={"modal"} swipeArea={20} coverScreen={true}>
+          <ScrollView width={screen.width}>
+            <View>
+            { trackJSX }
+            </View>
+          </ScrollView>
+        </Modal>
         </View >
-        {/* <View style={{ flex: 6, justifyContent: 'center', margin: 0 }}>
-          <Map settingLocation={this.settingLocation}></Map>
-        </View > */}
+
         <View style={{ flex: 1.3, backgroundColor: '#00FF00', justifyContent: 'space-evenly', alignItems: 'center', margin: 0 }}>
           <Time settingDate={this.settingDate} settingTime={this.settingTime}></Time>
         </View >
@@ -85,5 +104,9 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     paddingBottom: 50,
     backgroundColor: '#FFFFFF'
-  }
+  },  modal: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 500,
+  },
 })
