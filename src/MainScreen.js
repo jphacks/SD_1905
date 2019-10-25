@@ -17,7 +17,15 @@ export class MainScreen extends React.Component {
     this.state = {
       latitude: 38.255900,
       longitude: 140.84240,
+      latitudeDelta:0.00520,
+      longitudeDelta:0.00520,
       markers: []
+    };
+    this.camera = {
+      latitude: 0,
+      longitude: 0,
+      latitudeDelta: 0.00520,
+      longitudeDelta: 0.00520
     };
     this.latitude = 38.255900;
     this.longitude = 140.84240;
@@ -42,10 +50,9 @@ export class MainScreen extends React.Component {
     };
     Geolocation.getCurrentPosition(
       (position) => {
-        const _latitude = position.coords.latitude;
-        const _longitude = position.coords.longitude;
-        obj.latitude = _latitude;
-        obj.longitude = _longitude;
+        const {latitude, longitude} = position.coords
+        obj.latitude = latitude;
+        obj.longitude = longitude;
       },
       (error) => {
         console.warn(`ERROR(${error.code}): ${error.message}`);
