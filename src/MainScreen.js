@@ -63,7 +63,7 @@ export class MainScreen extends React.Component {
         res.map(obj => {
           newMarkers.push(
             {
-              id:obj.id,
+              id: obj.id,
               latlng: {
                 latitude: obj.place.latitude,
                 longitude: obj.place.longitude
@@ -79,8 +79,8 @@ export class MainScreen extends React.Component {
       })
       .catch(err => console.warn(err))
   }
-  
-  storeNewdata(obj){
+
+  storeNewdata(obj) {
     console.log("push new data ");
     console.log(obj);
     tmp = [];
@@ -91,16 +91,16 @@ export class MainScreen extends React.Component {
         console.log('storage last datas');
         console.log(tmp);
         tmp = tmp.concat(obj);
-        console.log("created data (obj)")
-        console.log(obj)
+        console.log("created data (obj)");
+        console.log(tmp);
         global.storage.save({
           key:
             'mapInfo',
           data: tmp
         })
-        .then(()=>{
-          this.loadMarkers();
-        })
+          .then(() => {
+            this.loadMarkers();
+          })
       })
       .catch(err => {
         console.warn(err);
@@ -117,7 +117,7 @@ export class MainScreen extends React.Component {
     }
   }
 
-  isTime(obj){
+  isTime(obj) {
 
   }
 
@@ -192,9 +192,9 @@ export class MainScreen extends React.Component {
             />
           ))}
         </MapView>
-        <View style={{position:'absolute', flexDirection:"row", left: 0, right: 0, bottom: 20, justifyContent: 'space-evenly'}}>
-          <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="現在地へ移動" onPress={() => {this.getCurrentPosition(this);this.fetchLatLong()} } />
-          <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="ピンを削除" />
+        <View style={{ position: 'absolute', flexDirection: "row", left: 0, right: 0, bottom: 20, justifyContent: 'space-evenly' }}>
+          <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="現在地へ移動" onPress={() => { this.getCurrentPosition(this); this.fetchLatLong() }} />
+          <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="ピンを削除" />
         </View>
         <Modal style={styles.modal} position={"bottom"} ref={"modal"} swipeArea={20}>
           <ScrollView width={screen.width}>
