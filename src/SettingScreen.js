@@ -28,8 +28,8 @@ export class SettingScreen extends React.Component {
 
   settingMusicId = (_musicId) => { this.setState({ time: _musicId }) }
 
-  storeData = () => {
-    newData = [
+  saveData = () => {
+    this.newData = [
       {
         // id: Date.now().toString,
         id: Date.now().toString(),
@@ -44,25 +44,7 @@ export class SettingScreen extends React.Component {
         musicId: this.state.musicId
       }
     ]
-    tmp = []
-    storage
-      .load({ key: 'mapInfo' })
-      .then(res => {
-        this.tmp = res;
-      })
-      .catch(err => {
-        this.tmp = null;
-        console.warn(err);
-      })
-    if (this.tmp != null) {
-      newData = newData.concat(this.tmp)
-    }
-    storage.save({
-      key:
-        'mapInfo',
-      data: newData
-    })
-    this.props.loadMarkers();
+    this.props.storeNewData(this.newData);
     this.props.closeModal();
     Alert.alert("Success", "set the music in your world !!!")
   }
@@ -83,7 +65,7 @@ export class SettingScreen extends React.Component {
         </View >
 
         <View style={{ flex: 1, backgroundColor: '#FFFF00', justifyContent: 'center', alignItems: 'center', margin: 0 }}>
-          <Button title="Save" onPress={this.storeData} />
+          <Button title="Save" onPress={this.saveData} />
         </View >
       </View>
     )

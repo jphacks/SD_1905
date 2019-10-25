@@ -63,7 +63,7 @@ export class MainScreen extends React.Component {
         res.map(obj => {
           newMarkers.push(
             {
-              id:obj.key,
+              id:obj.id,
               latlng: {
                 latitude: obj.place.latitude,
                 longitude: obj.place.longitude
@@ -73,12 +73,40 @@ export class MainScreen extends React.Component {
             }
           )
         })
-        console.log('markers')
-        console.log(newMarkers)
+        // console.log('markers')
+        // console.log(newMarkers)
         this.setState({ markers: newMarkers })
       })
       .catch(err => console.warn(err))
   }
+  
+  storeNewdata(obj){
+    console.log("push new data ");
+    console.log(obj);
+    tmp = [];
+    global.storage
+      .load({ key: 'mapInfo' })
+      .then(res => {
+        tmp = res;
+        console.log('storage last datas');
+        console.log(tmp);
+        tmp = tmp.concat(obj);
+        console.log("created data (obj)")
+        console.log(obj)
+        global.storage.save({
+          key:
+            'mapInfo',
+          data: tmp
+        })
+        .then(()=>{
+          this.loadMarkers();
+        })
+      })
+      .catch(err => {
+        console.warn(err);
+      })
+  }
+
 
   isNear(obj, c_lat, c_lng) {
     if (Math.abs((obj.place.latitude - c_lat) < 0.00001) && (Math.abs(obj.place.longitude - c_lng) < 0.00001)) {
@@ -87,6 +115,10 @@ export class MainScreen extends React.Component {
     else {
       return false;
     }
+  }
+
+  isTime(obj){
+
   }
 
   checker() {
@@ -115,16 +147,17 @@ export class MainScreen extends React.Component {
       .catch(err => console.warn(err))
   }
 
-  //  ComponentWillMountで初期化するらしい．調べてみたい．
-  componentDidMount() {
-    this.interval = setInterval(() => {
-      this.checker()
-    }, 5000);
-  }
-
   closeModal = () => {
     this.refs.modal.close();
   }
+
+  //  ComponentWillMountで初期化するらしい．調べてみたい．
+  componentDidMount() {
+    this.interval = setInterval(() => {
+      // this.checker()
+    }, 5000);
+  }
+
 
   render() {
     return (
@@ -152,6 +185,7 @@ export class MainScreen extends React.Component {
         >
           {this.state.markers.map(marker => (
             <Marker
+              identifier={marker.id}
               coordinate={marker.latlng}
               title={marker.title}
               description={marker.description}
@@ -164,7 +198,7 @@ export class MainScreen extends React.Component {
         </View>
         <Modal style={styles.modal} position={"bottom"} ref={"modal"} swipeArea={20}>
           <ScrollView width={screen.width}>
-            <SettingScreen closeModal={this.closeModal} loadMarkers={this.loadMarkers} lat={this.state.latitude} lng={this.state.longitude}></SettingScreen>
+            <SettingScreen storeNewData={this.storeNewdata} closeModal={this.closeModal} loadMarkers={this.loadMarkers} lat={this.state.latitude} lng={this.state.longitude}></SettingScreen>
           </ScrollView>
         </Modal>
       </View>
