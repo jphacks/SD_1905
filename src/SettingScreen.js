@@ -3,8 +3,11 @@ import { StyleSheet, Text, View, Alert, ScrollView, Dimensions } from 'react-nat
 import { Button } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 import { Time } from './components/Time.js';
+import { SpotifyView } from './components/SpotifyView.js';
+
 const musicData =[];
 const screen = Dimensions.get('window');
+
 for(let i=0; i < 30; i++){ //テストデータ作成
   musicData.push({
     title: "musicTitle"+i,
@@ -13,6 +16,7 @@ for(let i=0; i < 30; i++){ //テストデータ作成
     musicAlbum: "Album"+i,
   });
 }
+
 export class SettingScreen extends React.Component {
   constructor(props) {
     super(props)
@@ -33,7 +37,9 @@ export class SettingScreen extends React.Component {
 
   settingTime = (_time) => { this.setState({ time: _time }) }
 
-  settingMusicId = (_musicId) => { this.setState({ time: _musicId }) }
+  settingMusicId = (_musicId) => { this.setState({ musicId: _musicId }) }
+
+  settingSpotifyURI = (_spotifyURI) => { this.setState({ spotifyURI: _spotifyURI }) }
 
   async saveData() {
     if(this.state.id === null)  this.state.id = Date.now().toString();
@@ -66,11 +72,12 @@ export class SettingScreen extends React.Component {
           </ScrollView>
         </Modal>
         </View >
-
+        <View style={{ flex: 1, backgroundColor: '#FF0000', margin: 10}}>
+          <SpotifyView settingSpotifyURI={this.settingSpotifyURI}></SpotifyView>
+        </View>
         <View style={{ flex: 1.3, backgroundColor: '#00FF00', justifyContent: 'space-evenly', alignItems: 'center', margin: 0 }}>
           <Time settingDate={this.settingDate} settingTime={this.settingTime}></Time>
         </View >
-
         <View style={{ flex: 1, backgroundColor: '#FFFF00', justifyContent: 'center', alignItems: 'center', margin: 0 }}>
           <Button title="Save" onPress={() => {this.saveData();}} />
         </View >
@@ -92,7 +99,8 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     paddingBottom: 50,
     backgroundColor: '#FFFFFF'
-  },  modal: {
+  },
+  modal: {
     justifyContent: 'center',
     alignItems: 'center',
     height: 500,
