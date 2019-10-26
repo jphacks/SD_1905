@@ -174,7 +174,7 @@ export class MainScreen extends React.Component {
             const musicId = obj.musicId;
             this.setState({ musicId: obj.musicId })
             // musicPlay(obj.musicId)
-            Alert.alert(obj.musicId)
+            // Alert.alert(obj.musicId)
             console.log('hit!! ' + obj.musicId)
           }
           else {
@@ -255,7 +255,6 @@ export class MainScreen extends React.Component {
               <Callout>
                 <View>
                   <Text>{this.state.markers[index].description + " : " + index}</Text>
-                  <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Edit" onPress={() => {this.refs.modal.open();}} />
                   <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Remove" onPress={() => { this.removeMarker(index); }} />
                 </View>
               </Callout>
@@ -298,7 +297,7 @@ const styles = StyleSheet.create({
   },
 })
 
-const defaultLatitude = 38.255900;
-const defaultLongitude = 140.84240;
+const defaultLatitude = 38.260132;
+const defaultLongitude = 140.882432;
 const defaultLatitudeDelta = 0.00520
 const defaultLongitudeDelta = 0.00520
