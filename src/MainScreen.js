@@ -157,7 +157,7 @@ export class MainScreen extends React.Component {
     console.log('you\'re @ (latlng) ' + this.latitude + '/' + this.longitude);
     const c_lat = this.latitude;
     const c_lng = this.longitude;
-    storage
+    global.storage
       .load({ key: 'mapInfo' })
       .then(res => {
         console.log('informations')
@@ -200,6 +200,11 @@ export class MainScreen extends React.Component {
     this.interval = setInterval(() => {
       // this.checker()
     }, 10000);
+  }
+
+  removeMarkers() {
+    global.storage.save({key: 'mapInfo', data: []});
+    this.setState({markers: []});
   }
 
   render() {
@@ -247,6 +252,7 @@ export class MainScreen extends React.Component {
         <View style={{ position: 'absolute', flexDirection: "row", left: 0, right: 0, bottom: 20, justifyContent: 'space-evenly' }}>
           <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="現在地へ移動" onPress={() => { this.movePlace();}} />
           <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="forDebug" />
+          <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="ピンを削除" onPress={() => {this.removeMarkers();}}/>
         </View>
         <Modal style={styles.modal} position={"bottom"} ref={"modal"} swipeArea={20}>
           <ScrollView width={screen.width}>
