@@ -202,7 +202,15 @@ export class MainScreen extends React.Component {
     }, 10000);
   }
 
-  removeMarkers() {
+  async removeMarker(index) {
+    let markers = await global.storage.load({ key: 'mapInfo' });
+    markers.splice(index, 1);
+    global.storage.save({ key: 'mapInfo', data: markers });
+    this.loadMarkers();
+  }
+
+  // TODO: 取り除く（デバッグ用だから要らない子）
+  removeAllMarkers() {
     global.storage.save({key: 'mapInfo', data: []});
     this.setState({markers: []});
   }
@@ -242,7 +250,7 @@ export class MainScreen extends React.Component {
                 <View>
                   <Text>{this.state.markers[index].description + " : " + index}</Text>
                   <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Edit" onPress={() => {this.refs.modal.open();}} />
-                  <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Remove" onPress={() => {this.state.markers.splice(index, 1); this.forceUpdate();}} />
+                  <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Remove" onPress={() => { this.removeMarker(index); }} />
                 </View>
               </Callout>
             </Marker>
@@ -252,7 +260,7 @@ export class MainScreen extends React.Component {
         <View style={{ position: 'absolute', flexDirection: "row", left: 0, right: 0, bottom: 20, justifyContent: 'space-evenly' }}>
           <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="現在地へ移動" onPress={() => { this.movePlace();}} />
           <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="forDebug" />
-          <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="ピンを削除" onPress={() => {this.removeMarkers();}}/>
+          <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="ピンを削除" onPress={() => {this.removeAllMarkers();}}/>
         </View>
         <Modal style={styles.modal} position={"bottom"} ref={"modal"} swipeArea={20}>
           <ScrollView width={screen.width}>
