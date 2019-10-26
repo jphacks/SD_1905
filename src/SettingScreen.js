@@ -23,8 +23,8 @@ export class SettingScreen extends React.Component {
     this.state = {
       id: null,
       coordinate: {latitude: "0", longitude: "0"},
-      date: "2016-05-15",
-      time: "8:16 PM",
+      date: null,
+      time: null,
       musicId: "your world is",
       title: "title"
     }
