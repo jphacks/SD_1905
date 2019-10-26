@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, ScrollView, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Alert, ScrollView, Dimensions, TextInput} from 'react-native';
 import { Button } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
@@ -174,7 +174,7 @@ export class MainScreen extends React.Component {
             const musicId = obj.musicId;
             this.setState({ musicId: obj.musicId })
             // musicPlay(obj.musicId)
-            Alert.alert(obj.musicId)
+            // Alert.alert(obj.musicId)
             console.log('hit!! ' + obj.musicId)
           }
           else {
@@ -206,6 +206,11 @@ export class MainScreen extends React.Component {
     this.loadMarkers();
   }
 
+  storeCurrentPosition() {
+    this.setState({tmpLatitude: this.state.latitude, tmpLongitude: this.state.longitude});
+    this.refs.modal.open();
+  }
+
   // TODO: 取り除く（デバッグ用だから要らない子）
   removeAllMarkers() {
     global.storage.save({key: 'mapInfo', data: []});
@@ -226,6 +231,7 @@ export class MainScreen extends React.Component {
           }}
           showsUserLocation={true}
           showsMyLocationButton={true}
+          userLocationAnnotationTitle={"My Location"}
           onRegionChangeComplete={(position) => { this.setCameraPosition(position); }}
           onLongPress={(coords, pos) => {
             this.setState({
@@ -254,10 +260,12 @@ export class MainScreen extends React.Component {
 
           ))}
         </MapView>
+
         <View style={{ position: 'absolute', flexDirection: "row", left: 0, right: 0, bottom: 20, justifyContent: 'space-evenly' }}>
-          <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="現在地へ移動" onPress={() => { this.moveToCurrentPosition();}} />
-          <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="forDebug" />
-          <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="ピンを削除" onPress={() => {this.removeAllMarkers();}}/>
+          <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="現在地へ移動" onPress={() => { this.moveToCurrentPosition();}} />
+          <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="ここで登録" onPress={() => { this.storeCurrentPosition(); }} />
+          <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="forDebug" />
+          <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="ピンを削除" onPress={() => {this.removeAllMarkers();}}/>
         </View>
         <Modal style={styles.modal} position={"bottom"} ref={"modal"} swipeArea={20}>
           <ScrollView width={screen.width}>
@@ -287,6 +295,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 500,
   },
+  calloutView: {
+    flexDirection: "row",
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    borderRadius: 10,
+    width: "40%",
+    marginLeft: "30%",
+    marginRight: "30%",
+    marginTop: 20
+  },
+  calloutSearch: {
+    borderColor: "transparent",
+    marginLeft: 10,
+    width: "90%",
+    marginRight: 10,
+    height: 40,
+    borderWidth: 0.0}
 })
 
 const defaultLatitude = 38.255900;
