@@ -236,9 +236,10 @@ export class MainScreen extends React.Component {
     this.loadMarkers();
   }
 
-  storeCurrentPosition() {
-    this.setState({tmpLatitude: this.state.latitude, tmpLongitude: this.state.longitude});
-    this.refs.modal.open();
+  async storeCurrentPosition() {
+    const position = await this.getCurrentPosition().then(position => this.setPosition(position, false));
+    const {latitude, longitude} = position.coords;
+    this.openSettingsModal({coordinate: {latitude, longitude}});
   }
 
   // TODO: 取り除く（デバッグ用だから要らない子）
