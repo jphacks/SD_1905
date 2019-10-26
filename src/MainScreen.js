@@ -11,7 +11,7 @@ import Spotify from 'rn-spotify-sdk';
 
 import { SettingScreen } from './SettingScreen.js';
 
-const nearDist = 40;
+const nearDist = 100;
 const screen = Dimensions.get('window');
 
 export class MainScreen extends React.Component {
@@ -153,7 +153,7 @@ export class MainScreen extends React.Component {
   }
 
   isDateTime(obj) {
-    const {date, time} = obj.time;
+    const {date, time} = obj;
     const now = new Date()
     const currentDate = moment(now).format("YYYY-MM-DD");
     const currentTime = moment(now).format("h:mm A")
@@ -176,6 +176,9 @@ export class MainScreen extends React.Component {
   }
 
   async checker() {
+    const playbackState = Spotify.getPlaybackState();
+    if (playbackState != null && playbackState.playing) return;
+
     const position = await this.getCurrentPosition().then((position) => this.setPosition(position, false));
     const {latitude, longitude} = position.coords;
     console.log('you\'re @ (latlng) ' + latitude + '/' + longitude);
@@ -298,6 +301,7 @@ export class MainScreen extends React.Component {
           <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="ここで登録" onPress={() => { this.storeCurrentPosition(); }} />
           <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="forDebug" />
           <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="ピンを削除" onPress={() => {this.removeAllMarkers();}}/>
+          <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="停止" onPress={() => {Spotify.setPlaying(false);}}/>
         </View>
         <Modal style={styles.modal} position={"bottom"} ref={"modal"} swipeArea={20}>
           <ScrollView width={screen.width}>
