@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, Alert, TouchableHighlight, TextInput } from 'react-native';
 import Spotify from 'rn-spotify-sdk';
 
-export class SpotifyScreen extends React.Component {
+export class SpotifyView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -31,16 +31,8 @@ export class SpotifyScreen extends React.Component {
         // cancelled
       }
     }).catch((error) => {
-      // error
       Alert.alert("Error", error.message);
     });
-    console.log(1);
-  }
-
-  playMusic = () => {
-    const URI = 'spotify:track:17EiIn0d2tftCjJrGOrbFj'
-    Spotify.playURI(URI, 0, 0);
-    console.log(this.state.loggedIn);
   }
 
   async initializeIfNeeded() {
@@ -54,7 +46,6 @@ export class SpotifyScreen extends React.Component {
         "scopes": ["user-read-private", "playlist-read", "playlist-read-private", "streaming"],
       };
       const loggedIn = await Spotify.initialize(spotifyOptions);
-      console.log(loggedIn);
       // update UI state
       this.setState({
         spotifyInitialized: true,
@@ -62,9 +53,11 @@ export class SpotifyScreen extends React.Component {
       });
     }
     else {
+      const loggedIn = await Spotify.isLoggedIn();
       // update UI state
       this.setState({
-        spotifyInitialized: true
+        spotifyInitialized: true,
+        spotifyLoggedIn: loggedIn
       });
     }
   }
@@ -88,9 +81,6 @@ export class SpotifyScreen extends React.Component {
             </Text>
             <TouchableHighlight onPress={this.spotifyLoginButtonWasPressed} style={styles.spotifyLoginButton}>
               <Text style={styles.spotifyLoginButtonText}>Log into Spotify</Text>
-            </TouchableHighlight>
-            <TouchableHighlight onPress={this.playMusic} style={styles.spotifyLoginButton}>
-              <Text style={styles.spotifyLoginButtonText}>Play</Text>
             </TouchableHighlight>
           </View>
         );
