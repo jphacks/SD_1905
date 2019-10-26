@@ -16,27 +16,26 @@ export class MainScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      latitude: 38.255900,
-      longitude: 140.84240,
-      latitudeDelta: 0.00520,
-      longitudeDelta: 0.00520,
+      latitude: defaultLatitude,
+      longitude: defaultLongitude,
+      latitudeDelta: defaultLatitudeDelta,
+      longitudeDelta: defaultLongitudeDelta,
       tmpLatitude: null,
       tmpLongitude: null,
       markers: []
     };
     this.camera = {
-      latitude: 0,
-      longitude: 0,
-      latitudeDelta: 0.11620,
-      longitudeDelta: 0.11620
+      latitude: defaultLatitude,
+      longitude: defaultLongitude,
+      latitudeDelta: defaultLatitudeDelta,
+      longitudeDelta: defaultLongitudeDelta
     };
     this.realtimePosition = {
-      latitude : 38.255900, 
-      longitude : 140.84240
+      latitude : defaultLatitude, 
+      longitude : defaultLongitude
     }
 
-    this.setPosition = this.setPosition.bind(this);
-    this.getCurrentPosition().then(this.setPosition);
+    this.moveToCurrentPosition();
     this.loadMarkers()
   }
 
@@ -68,7 +67,13 @@ export class MainScreen extends React.Component {
     this.realtimePosition = position.coords;
     if(update) {
       const {latitude, longitude} = position.coords;
-      this.setState({latitude, longitude});
+      this.setCameraPosition({
+        latitude: latitude,
+        longitude: longitude,
+        latitudeDelta: defaultLatitudeDelta,
+        longitudeDelta: defaultLongitudeDelta
+      })
+      this.syncCameraPosition();
     }
     return position;
   }
@@ -186,12 +191,6 @@ export class MainScreen extends React.Component {
 
   async moveToCurrentPosition() {
     await this.getCurrentPosition().then((position) => this.setPosition(position, true));
-    this.setCameraPosition({
-      latitude: this.state.latitude,
-      longitude: this.state.longitude,
-      latitudeDelta: 0.00520,
-      longitudeDelta: 0.00520
-    })
   }
 
   componentDidMount() {
@@ -292,11 +291,14 @@ const styles = StyleSheet.create({
   Main: {
     flex: 1
   },
-
   modal: {
     justifyContent: 'center',
     alignItems: 'center',
     height: 500,
   },
-
 })
+
+const defaultLatitude = 38.255900;
+const defaultLongitude = 140.84240;
+const defaultLatitudeDelta = 0.00520
+const defaultLongitudeDelta = 0.00520
