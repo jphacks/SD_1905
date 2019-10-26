@@ -28,13 +28,16 @@ export class MainScreen extends React.Component {
       latitudeDelta: 0.11620,
       longitudeDelta: 0.11620
     };
-    this.latitude = 38.255900;
-    this.longitude = 140.84240;
+    this.realtimePosition = {
+      latitude : 38.255900, 
+      longitude : 140.84240
+    }
 
-    this.getCurrentPosition(this);
-    // setTimeout(() => { this.getCurrentPosition(this); this.fetchLatLong(); }, 2000);
+    this.setPosition = this.setPosition.bind(this);
+    this.getCurrentPosition().then(this.setPosition);
     this.loadMarkers()
   }
+
   setCameraPosition = (region) => {
     this.camera = region
   }
@@ -48,32 +51,23 @@ export class MainScreen extends React.Component {
     })
   }
 
-  fetchLatLong = () => {
-    this.setState({
-      latitude: this.latitude,
-      longitude: this.longitude
-    })
-  }
-
-  getCurrentPosition(obj) {
-    const options = {
+  getCurrentPosition() {
+    options = {
       enableHighAccuracy: true,
       timeout: 1000,
       maximumAge: 0
     };
-    Geolocation.getCurrentPosition(
-      // Success
-      (position) => {
-        const { latitude, longitude } = position.coords
-        obj.latitude = latitude;
-        obj.longitude = longitude;
-      },
-      // Failed
-      (error) => {
-        console.warn(`ERROR(${error.code}): ${error.message}`);
-      },
-      options
-    );
+    return new Promise((resolve, reject) => {
+      Geolocation.getCurrentPosition(resolve, reject, options);
+    });
+  }
+
+  setPosition(position, update=true) {
+    this.realtimePosition = position.coords;
+    if(update) {
+      const {latitude, longitude} = position.coords;
+      this.setState({latitude, longitude});
+    }
   }
 
   loadMarkers = () => {
@@ -159,7 +153,7 @@ export class MainScreen extends React.Component {
   }
 
   checker() {
-    this.getCurrentPosition(this);
+    this.getCurrentPosition().then((position) => this.setPosition(position, false));
     console.log('you\'re @ (latlng) ' + this.latitude + '/' + this.longitude);
     const c_lat = this.latitude;
     const c_lng = this.longitude;
@@ -191,7 +185,7 @@ export class MainScreen extends React.Component {
   //  ComponentWillMountで初期化するらしい．調べてみたい．
 
   movePlace = () => {
-    this.getCurrentPosition(this); this.fetchLatLong();
+    this.getCurrentPosition().then(this.setPosition);
     setTimeout(() => {
       this.setCameraPosition({
         latitude: this.state.latitude,
@@ -229,7 +223,6 @@ export class MainScreen extends React.Component {
               tmpLongitude: coords.nativeEvent.coordinate.longitude
             });
             this.syncCameraPosition();
-            // this.getCurrentPosition(this)
             this.refs.modal.open();
           }
           }
@@ -252,7 +245,7 @@ export class MainScreen extends React.Component {
           ))}
         </MapView>
         <View style={{ position: 'absolute', flexDirection: "row", left: 0, right: 0, bottom: 20, justifyContent: 'space-evenly' }}>
-          <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="現在地へ移動" onPress={() => { this.getCurrentPosition(this); this.fetchLatLong() }} />
+          <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="現在地へ移動" onPress={() => { this.movePlace();}} />
           <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="forDebug" />
         </View>
         <Modal style={styles.modal} position={"bottom"} ref={"modal"} swipeArea={20}>
