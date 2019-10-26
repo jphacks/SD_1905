@@ -250,6 +250,11 @@ PODS:
     - React
   - RNDateTimePicker (2.1.0):
     - React
+  - RNEventEmitter (1.0.15):
+    - React
+  - RNSpotify (1.2.12):
+    - React
+    - RNEventEmitter
   - RNVectorIcons (6.6.0):
     - React
   - Yoga (1.14.0)
@@ -289,6 +294,8 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
+  - RNEventEmitter (from `../node_modules/react-native-events`)
+  - RNSpotify (from `../node_modules/rn-spotify-sdk`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -357,6 +364,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/async-storage"
   RNDateTimePicker:
     :path: "../node_modules/@react-native-community/datetimepicker"
+  RNEventEmitter:
+    :path: "../node_modules/react-native-events"
+  RNSpotify:
+    :path: "../node_modules/rn-spotify-sdk"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
   Yoga:
@@ -395,6 +406,8 @@ SPEC CHECKSUMS:
   ReactCommon: 5848032ed2f274fcb40f6b9ec24067787c42d479
   RNCAsyncStorage: 60a80e72d95bf02a01cace55d3697d9724f0d77f
   RNDateTimePicker: 9db00606d689f5653f08aa601c81b9d3266a0a19
+  RNEventEmitter: db22b54ae7d9be0bd5725613f79a51e2bc364a93
+  RNSpotify: 87b8be666e707219f5ea676fbf49aee791108b5e
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   Yoga: 14927e37bd25376d216b150ab2a561773d57911f
 

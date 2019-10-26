@@ -7,6 +7,7 @@ import { Marker, Callout } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import { getDistance } from 'geolib';
 import moment from "moment";
+import Spotify from 'rn-spotify-sdk';
 
 import { SettingScreen } from './SettingScreen.js';
 
@@ -94,7 +95,7 @@ export class MainScreen extends React.Component {
                 longitude: obj.place.longitude
               },
               title: "♪ " + obj.musicId,
-              description: "date:" + obj.time.date + ' time: ' + obj.time.time
+              description: "date:" + obj.time.date + ' time: ' + obj.time.time + ' uri: ' + obj.spotifyURI
             }
           )
         })
@@ -151,6 +152,10 @@ export class MainScreen extends React.Component {
     }
   }
 
+  musicPlay = (spotifyURI) => {
+    Spotify.playURI(spotifyURI, 0, 0);
+  }
+
   async checker() {
     const position = await this.getCurrentPosition().then((position) => this.setPosition(position, false));
     const {latitude, longitude} = position.coords;
@@ -168,6 +173,9 @@ export class MainScreen extends React.Component {
             // musicPlay(obj.musicId)
             // Alert.alert(obj.musicId)
             console.log('hit!! ' + obj.musicId)
+            if (obj.spotifyURI != null) {
+              this.musicPlay(obj.spotifyURI)
+            }
           }
           else {
             console.log('not hit ...')
