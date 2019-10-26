@@ -98,29 +98,6 @@ export class MainScreen extends React.Component {
     const markers = await global.storage.load({ key: 'mapInfo' });
     this.setState({markers});
     console.log(markers);
-    
-    // TODO: この形式にしたがって、Calloutにタイトルをつける
-    // global.storage
-    //   .load({ key: 'mapInfo' })
-    //   .then(res => {
-    //     newMarkers = [];
-    //     res.map(obj => {
-    //       newMarkers.push(
-    //         {
-    //           // key: Date.now(),
-    //           id: obj.id,
-    //           latlng: {
-    //             latitude: obj.coordinate.latitude,
-    //             longitude: obj.coordinate.longitude
-    //           },
-    //           title: "♪ " + obj.musicId,
-    //           description: "date:" + obj.time.date + ' time: ' + obj.time.time
-    //         }
-    //       )
-    //     })
-    //     this.setState({ markers: newMarkers })
-    //   })
-    //   .catch(err => console.warn(err))
   }
 
   async storeMarker(marker) {
@@ -287,7 +264,8 @@ export class MainScreen extends React.Component {
             >
               <Callout>
                 <View>
-                  <Text>{this.state.markers[index].title + " : " + index}</Text>
+                  <Text>{'date: ' + this.state.markers[index].date}</Text>
+                  <Text>{'♪ ' + this.state.markers[index].musicId}</Text>
                   <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Remove" onPress={() => { this.removeMarker(index); }} />
                   <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Edit" onPress={() => { this.openSettingsModal(this.state.settingInfo); }} />
                 </View>
