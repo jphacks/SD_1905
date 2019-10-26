@@ -16,16 +16,14 @@ global.storage = storage // from all component
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      // Current locatinon
-      latitude: 37.78825,
-      longitude: -122.4324,
-      // Current time
-      date: "2016-05-15",
-      time: "8:16 PM",
-      // Current Music
-      music: 3.141592
-    }
+    this.initMapInfo();
+  }
+
+  // 初期起動時に mapInfo が存在しない場合の例外処理
+  async initMapInfo() {
+    global.storage
+      .load({ key: 'mapInfo' })
+      .catch( () => { global.storage.save({ key: 'mapInfo', data: [] }) });
   }
 
   render() {
