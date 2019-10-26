@@ -6,11 +6,11 @@ export class Time extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      date: "2019-10-27",
-      time: "0:00 PM"
-
+      date: null,
+      time: null
     }
   }
+
   render() {
     return (
       <View style={styles.Pickers}>
@@ -18,7 +18,7 @@ export class Time extends Component {
           style={{ width: 200 }}
           date={this.state.date}
           mode="date"
-          placeholder="select date"
+          placeholder="Select Date (Optional)"
           format="YYYY-MM-DD"
           minDate="2000-05-01"
           maxDate="2030-06-01"
@@ -45,7 +45,7 @@ export class Time extends Component {
           style={{ width: 200 }}
           date={this.state.time}
           mode="time"
-          placeholder="select time"
+          placeholder="Select Time (Optional)"
           format="LT"
           iconSource={require('../fig/watch.png')}
           confirmBtnText="Confirm"
@@ -71,7 +71,6 @@ export class Time extends Component {
     )
   }
 }
-
 
 const styles = StyleSheet.create({
   Pickers: {

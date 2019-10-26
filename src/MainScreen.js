@@ -6,6 +6,7 @@ import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Marker, Callout } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import { getDistance } from 'geolib';
+import moment from "moment";
 
 import { SettingScreen } from './SettingScreen.js';
 
@@ -102,36 +103,20 @@ export class MainScreen extends React.Component {
       .catch(err => console.warn(err))
   }
 
-  storeNewdata = (obj) => {
-    global.storage
-      .load({ key: 'mapInfo' })
-      .then(res => {
-        ret = res;
-        ret = res.concat(obj);
-        // console.log("created data (obj)");
-        // console.log(tmp);
-        global.storage.save({
-          key:
-            'mapInfo',
-          data: ret
-        })
-          .then(() => {
-            this.loadMarkers();
-          })
-      })
-      .catch(err => {
-        global.storage.save(
-          {
-            key:
-              'mapInfo',
-            data: obj
-          }
-        )
-          .then(() => {
-            this.loadMarkers();
-          });
-        console.warn(err);
-      })
+  async storeMarker(marker) {
+    let markers = await global.storage.load({ key: 'mapInfo' });
+
+    // TODO: O(n) -> O(1) ：キー情報を付与するなどして
+    let exist = false;
+    for(m of markers) {
+      if(m.id !== marker.id)  continue;
+      exist = true;
+      m = marker;
+      break;
+    }
+    if(!exist)  markers.push(marker);
+    await global.storage.save({ key: 'mapInfo', data: markers });
+    this.loadMarkers();
   }
 
   isNear(obj, c_lat, c_lng) {
@@ -139,22 +124,29 @@ export class MainScreen extends React.Component {
       {latitude: obj.place.latitude, longitude: obj.place.longitude},
       {latitude: c_lat, longitude: c_lng}
     );
-    console.log(dist);
+    console.log("dist: " + dist);
     if(dist <= nearDist){
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
 
-  isTime(obj) {
-    let date = null;
-    let time = null;
-    if ((obj.time.date = date && obj.time.time == time) || 1) {
+  isDateTime(obj) {
+    const {date, time} = obj.time;
+    const now = new Date()
+    const currentDate = moment(now).format("YYYY-MM-DD");
+    const currentTime = moment(now).format("h:mm A")
+
+    let isDate = false
+    let isTime = false
+
+    if (date == null || date == currentDate) isDate = true;
+    if (time == null || time == currentTime) isTime = true;
+
+    if (isDate == true && isTime == true) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
@@ -167,10 +159,10 @@ export class MainScreen extends React.Component {
       .load({ key: 'mapInfo' })
       .then(res => {
         console.log('informations')
-        console.log(res)
+        // console.log(res)
         res.map(obj => {
-          console.log(obj);
-          if (this.isNear(obj, latitude, longitude) && this.isTime(obj)) {
+          // console.log(obj);
+          if (this.isNear(obj, latitude, longitude) && this.isDateTime(obj)) {
             const musicId = obj.musicId;
             this.setState({ musicId: obj.musicId })
             // musicPlay(obj.musicId)
@@ -197,6 +189,14 @@ export class MainScreen extends React.Component {
     this.interval = setInterval(() => {
       this.checker()
     }, 10000);
+  }
+
+  async moveMarker(index, coordinate) {
+    const {latitude, longitude} = coordinate;
+    let markers = await global.storage.load({ key: 'mapInfo' });
+    markers[index].place = {latitude, longitude};
+    global.storage.save({ key: 'mapInfo', data: markers });
+    this.loadMarkers();
   }
 
   async removeMarker(index) {
@@ -231,7 +231,7 @@ export class MainScreen extends React.Component {
           }}
           showsUserLocation={true}
           showsMyLocationButton={true}
-          userLocationAnnotationTitle={"My Location"}
+          userLocationAnnotationTitle={""}
           onRegionChangeComplete={(position) => { this.setCameraPosition(position); }}
           onLongPress={(coords, pos) => {
             this.setState({
@@ -244,15 +244,15 @@ export class MainScreen extends React.Component {
           }
         >
           {this.state.markers.map((marker, index) => (
-            <Marker
+            <Marker draggable
               identifier={marker.id}
               coordinate={marker.latlng}
               title={marker.title}
+              onDragEnd={(event) => {this.moveMarker(index, event.nativeEvent.coordinate)}}
             >
               <Callout>
                 <View>
                   <Text>{this.state.markers[index].description + " : " + index}</Text>
-                  <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Edit" onPress={() => {this.refs.modal.open();}} />
                   <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Remove" onPress={() => { this.removeMarker(index); }} />
                 </View>
               </Callout>
@@ -261,7 +261,7 @@ export class MainScreen extends React.Component {
           ))}
         </MapView>
 
-        <View style={{ position: 'absolute', flexDirection: "row", left: 0, right: 0, bottom: 20, justifyContent: 'space-evenly' }}>
+        <View style={{ position: 'absolute', flexDirection: "row", left: 0, right: 0, bottom: 60, justifyContent: 'space-evenly' }}>
           <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="現在地へ移動" onPress={() => { this.moveToCurrentPosition();}} />
           <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="ここで登録" onPress={() => { this.storeCurrentPosition(); }} />
           <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="forDebug" />
@@ -270,7 +270,7 @@ export class MainScreen extends React.Component {
         <Modal style={styles.modal} position={"bottom"} ref={"modal"} swipeArea={20}>
           <ScrollView width={screen.width}>
             <SettingScreen
-              storeNewData={this.storeNewdata}
+              storeMarker={this.storeMarker}
               closeModal={this.closeModal}
               loadMarkers={this.loadMarkers}
               lat={this.state.tmpLatitude} lng={this.state.tmpLongitude}/>
@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.0}
 })
 
-const defaultLatitude = 38.255900;
-const defaultLongitude = 140.84240;
+const defaultLatitude = 38.260132;
+const defaultLongitude = 140.882432;
 const defaultLatitudeDelta = 0.00520
 const defaultLongitudeDelta = 0.00520
