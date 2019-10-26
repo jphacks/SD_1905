@@ -162,9 +162,9 @@ export class MainScreen extends React.Component {
       .load({ key: 'mapInfo' })
       .then(res => {
         console.log('informations')
-        console.log(res)
+        // console.log(res)
         res.map(obj => {
-          console.log(obj);
+          // console.log(obj);
           if (this.isNear(obj, latitude, longitude) && this.isTime(obj)) {
             const musicId = obj.musicId;
             this.setState({ musicId: obj.musicId })
@@ -198,6 +198,14 @@ export class MainScreen extends React.Component {
     this.interval = setInterval(() => {
       this.checker()
     }, 10000);
+  }
+
+  async moveMarker(index, coordinate) {
+    const {latitude, longitude} = coordinate;
+    let markers = await global.storage.load({ key: 'mapInfo' });
+    markers[index].place = {latitude, longitude};
+    global.storage.save({ key: 'mapInfo', data: markers });
+    this.loadMarkers();
   }
 
   async removeMarker(index) {
@@ -239,10 +247,11 @@ export class MainScreen extends React.Component {
           }
         >
           {this.state.markers.map((marker, index) => (
-            <Marker
+            <Marker draggable
               identifier={marker.id}
               coordinate={marker.latlng}
               title={marker.title}
+              onDragEnd={(event) => {this.moveMarker(index, event.nativeEvent.coordinate)}}
             >
               <Callout>
                 <View>
