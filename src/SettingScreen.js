@@ -58,19 +58,22 @@ export class SettingScreen extends React.Component {
     this.props.closeModal();
     Alert.alert("Success", "set the music in your world !!!")
   }
-  setMusic = (num) => { this.setState({musicId: musicData[num].title}); }
+  setMusic = (num) => { 
+    this.setState({musicId: musicData[num].title}); 
+    this.refs.modal1.close();
+}
   render() {
     let trackJSX = [];
     for(let i=0; i < musicData.length; i++){
       trackJSX.push(
-        <Button title={"title: "+ musicData[i].title + " artist: "+ musicData[i].artist} onPress={this.setMusic.bind(this,i)} />
+        <Button title={"title: "+ musicData[i].title + " artist: "+ musicData[i].artist} onPress={this.setMusic.bind(this,i)}/>
       );
     }
     return (
       <View style={styles.Setting}>
         <View style={{ flex: 1, backgroundColor: '#FF00FF', justifyContent: 'center', alignItems: 'center', margin: 0 }}>
-        <Button title={this.state.musicId} onPress={() => this.refs.modal.open()} />
-        <Modal style={styles.modal} position={"center"} backdrop={true} ref={"modal"} swipeArea={20} coverScreen={true}>
+        <Button title={this.state.musicId} onPress={() => this.refs.modal1.open()} />
+        <Modal style={styles.modal} position={"center"} backdrop={true} ref={"modal1"} swipeArea={20} coverScreen={true}>
           <ScrollView width={screen.width}>
             <View>
             { trackJSX }
