@@ -6,6 +6,7 @@ import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Marker, Callout } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import { getDistance } from 'geolib';
+import moment from "moment";
 
 import { SettingScreen } from './SettingScreen.js';
 
@@ -123,22 +124,29 @@ export class MainScreen extends React.Component {
       {latitude: obj.place.latitude, longitude: obj.place.longitude},
       {latitude: c_lat, longitude: c_lng}
     );
-    console.log(dist);
+    console.log("dist: " + dist);
     if(dist <= nearDist){
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
 
-  isTime(obj) {
-    let date = null;
-    let time = null;
-    if ((obj.time.date = date && obj.time.time == time) || 1) {
+  isDateTime(obj) {
+    const {date, time} = obj.time;
+    const now = new Date()
+    const currentDate = moment(now).format("YYYY-MM-DD");
+    const currentTime = moment(now).format("h:mm A")
+
+    let isDate = false
+    let isTime = false
+
+    if (date == null || date == currentDate) isDate = true;
+    if (time == null || time == currentTime) isTime = true;
+
+    if (isDate == true && isTime == true) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
@@ -154,7 +162,7 @@ export class MainScreen extends React.Component {
         // console.log(res)
         res.map(obj => {
           // console.log(obj);
-          if (this.isNear(obj, latitude, longitude) && this.isTime(obj)) {
+          if (this.isNear(obj, latitude, longitude) && this.isDateTime(obj)) {
             const musicId = obj.musicId;
             this.setState({ musicId: obj.musicId })
             // musicPlay(obj.musicId)

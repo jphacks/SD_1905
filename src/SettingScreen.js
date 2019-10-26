@@ -3,8 +3,10 @@ import { StyleSheet, Text, View, Alert, ScrollView, Dimensions } from 'react-nat
 import { Button } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 import { Time } from './components/Time.js';
+
 const musicData =[];
 const screen = Dimensions.get('window');
+
 for(let i=0; i < 30; i++){ //テストデータ作成
   musicData.push({
     title: "musicTitle"+i,
@@ -13,6 +15,7 @@ for(let i=0; i < 30; i++){ //テストデータ作成
     musicAlbum: "Album"+i,
   });
 }
+
 export class SettingScreen extends React.Component {
   constructor(props) {
     super(props)
@@ -21,8 +24,10 @@ export class SettingScreen extends React.Component {
       latitude: this.props.lat,
       longitude: this.props.lng,
       // time info
-      date: "2016-05-15",
-      time: "8:16 PM",
+      date: null,
+      time: null,
+      // date: "2016-05-15",
+      // time: "8:16 PM",
       // music info
       musicId: "your world is"
     }
@@ -56,10 +61,12 @@ export class SettingScreen extends React.Component {
     this.props.closeModal();
     Alert.alert("Success", "set the music in your world !!!")
   }
+
   setMusic = (num) => { 
     this.setState({musicId: musicData[num].title}); 
     this.refs.modal1.close();
-}
+  }
+
   render() {
     let trackJSX = [];
     for(let i=0; i < musicData.length; i++){
@@ -105,7 +112,8 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     paddingBottom: 50,
     backgroundColor: '#FFFFFF'
-  },  modal: {
+  },
+  modal: {
     justifyContent: 'center',
     alignItems: 'center',
     height: 500,
