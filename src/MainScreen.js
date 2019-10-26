@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Alert, ScrollView, Dimensions } from 'react-nat
 import { Button } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
-import { Marker } from 'react-native-maps';
+import { Marker, Callout } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 import { getDistance } from 'geolib';const nearDist = 40;
 
@@ -30,6 +30,8 @@ export class MainScreen extends React.Component {
     };
     this.latitude = 38.255900;
     this.longitude = 140.84240;
+
+    this.getCurrentPosition(this);
     // setTimeout(() => { this.getCurrentPosition(this); this.fetchLatLong(); }, 2000);
     this.loadMarkers()
   }
@@ -232,13 +234,21 @@ export class MainScreen extends React.Component {
           }
           }
         >
-          {this.state.markers.map(marker => (
+          {this.state.markers.map((marker, index) => (
             <Marker
               identifier={marker.id}
               coordinate={marker.latlng}
               title={marker.title}
-              description={marker.description}
-            />
+            >
+              <Callout>
+                <View>
+                  <Text>{this.state.markers[index].description + " : " + index}</Text>
+                  <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Edit" onPress={() => {this.refs.modal.open();}} />
+                  <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Remove" onPress={() => {this.state.markers.splice(index, 1); this.forceUpdate();}} />
+                </View>
+              </Callout>
+            </Marker>
+
           ))}
         </MapView>
         <View style={{ position: 'absolute', flexDirection: "row", left: 0, right: 0, bottom: 20, justifyContent: 'space-evenly' }}>
