@@ -262,7 +262,7 @@ export class MainScreen extends React.Component {
 
           ))}
         </MapView>
-        <View style={{ position: 'absolute', flexDirection: "row", left: 0, right: 0, bottom: 20, justifyContent: 'space-evenly' }}>
+        <View style={{ position: 'absolute', flexDirection: "row", left: 0, right: 0, bottom: 60, justifyContent: 'space-evenly' }}>
           <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="現在地へ移動" onPress={() => { this.moveToCurrentPosition();}} />
           <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="forDebug" />
           <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="ピンを削除" onPress={() => {this.removeAllMarkers();}}/>
