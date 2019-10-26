@@ -5,11 +5,13 @@ import Modal from 'react-native-modalbox';
 import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Marker, Callout } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
-import { getDistance } from 'geolib';const nearDist = 40;
+import { getDistance } from 'geolib';
 
 import { SettingScreen } from './SettingScreen.js';
 
+const nearDist = 40;
 const screen = Dimensions.get('window');
+
 export class MainScreen extends React.Component {
   constructor(props) {
     super(props);
@@ -62,16 +64,16 @@ export class MainScreen extends React.Component {
     });
   }
 
-  setPosition(position, update=true) {
+  async setPosition(position, update=true) {
     this.realtimePosition = position.coords;
     if(update) {
       const {latitude, longitude} = position.coords;
       this.setState({latitude, longitude});
     }
+    return position;
   }
 
   loadMarkers = () => {
-    // this.fetchLatLong();
     global.storage
       .load({ key: 'mapInfo' })
       .then(res => {
@@ -152,18 +154,18 @@ export class MainScreen extends React.Component {
     }
   }
 
-  checker() {
-    this.getCurrentPosition().then((position) => this.setPosition(position, false));
-    console.log('you\'re @ (latlng) ' + this.latitude + '/' + this.longitude);
-    const c_lat = this.latitude;
-    const c_lng = this.longitude;
+  async checker() {
+    const position = await this.getCurrentPosition().then((position) => this.setPosition(position, false));
+    const {latitude, longitude} = position.coords;
+    console.log('you\'re @ (latlng) ' + latitude + '/' + longitude);
     global.storage
       .load({ key: 'mapInfo' })
       .then(res => {
         console.log('informations')
         console.log(res)
         res.map(obj => {
-          if (this.isNear(obj, c_lat, c_lng) && this.isTime(obj)) {
+          console.log(obj);
+          if (this.isNear(obj, latitude, longitude) && this.isTime(obj)) {
             const musicId = obj.musicId;
             this.setState({ musicId: obj.musicId })
             // musicPlay(obj.musicId)
@@ -182,23 +184,19 @@ export class MainScreen extends React.Component {
     this.refs.modal.close();
   }
 
-  //  ComponentWillMountで初期化するらしい．調べてみたい．
-
-  movePlace = () => {
-    this.getCurrentPosition().then(this.setPosition);
-    setTimeout(() => {
-      this.setCameraPosition({
-        latitude: this.state.latitude,
-        longitude: this.state.longitude,
-        latitudeDelta: 0.00520,
-        longitudeDelta: 0.00520
-      })
-    }, 500)
+  async moveToCurrentPosition() {
+    await this.getCurrentPosition().then((position) => this.setPosition(position, true));
+    this.setCameraPosition({
+      latitude: this.state.latitude,
+      longitude: this.state.longitude,
+      latitudeDelta: 0.00520,
+      longitudeDelta: 0.00520
+    })
   }
 
   componentDidMount() {
     this.interval = setInterval(() => {
-      // this.checker()
+      this.checker()
     }, 10000);
   }
 
@@ -258,7 +256,7 @@ export class MainScreen extends React.Component {
           ))}
         </MapView>
         <View style={{ position: 'absolute', flexDirection: "row", left: 0, right: 0, bottom: 20, justifyContent: 'space-evenly' }}>
-          <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="現在地へ移動" onPress={() => { this.movePlace();}} />
+          <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="現在地へ移動" onPress={() => { this.moveToCurrentPosition();}} />
           <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="forDebug" />
           <Button titleStyle={{ fontWeight: 'bold' }} type="solid" title="ピンを削除" onPress={() => {this.removeAllMarkers();}}/>
         </View>
