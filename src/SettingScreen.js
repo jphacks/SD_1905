@@ -17,20 +17,17 @@ export class SettingScreen extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      // location info
-      latitude: this.props.lat,
-      longitude: this.props.lng,
-      // time info
+      id: null,
+      coordinate: {latitude: "0", longitude: "0"},
       date: "2016-05-15",
       time: "8:16 PM",
-      // music info
-      musicId: "your world is"
+      musicId: "your world is",
+      title: "title"
     }
-    console.log('new setting screen')
-    console.log(this.state.latitude + ' ' + this.state.longitude);
+    Object.assign(this.state, this.props.info);
   }
 
-  settingLocation = (_lat, _lon) => { this.setState({ latitude: _lat, longitude: _lon }) }
+  settingLocation = (_lat, _lon) => { this.setState({ coordinate: {_lat, _lon} }) }
 
   settingDate = (_date) => { this.setState({ date: _date }); console.log('date set'); }
 
@@ -38,28 +35,18 @@ export class SettingScreen extends React.Component {
 
   settingMusicId = (_musicId) => { this.setState({ time: _musicId }) }
 
-  saveData = () => {
-    this.newData = {
-        // id: Date.now().toString,
-        id: Date.now().toString(),
-        time: {
-          date: this.state.date,
-          time: this.state.time
-        },
-        place: {
-          latitude: this.state.latitude,
-          longitude: this.state.longitude,
-        },
-        musicId: this.state.musicId
-    }
-    this.props.storeMarker(this.newData);
+  async saveData() {
+    if(this.state.id === null)  this.state.id = Date.now().toString();
+    this.props.storeMarker(this.state);
     this.props.closeModal();
     Alert.alert("Success", "set the music in your world !!!")
   }
+
   setMusic = (num) => { 
     this.setState({musicId: musicData[num].title}); 
     this.refs.modal1.close();
-}
+  }
+
   render() {
     let trackJSX = [];
     for(let i=0; i < musicData.length; i++){
@@ -85,7 +72,7 @@ export class SettingScreen extends React.Component {
         </View >
 
         <View style={{ flex: 1, backgroundColor: '#FFFF00', justifyContent: 'center', alignItems: 'center', margin: 0 }}>
-          <Button title="Save" onPress={this.saveData} />
+          <Button title="Save" onPress={() => {this.saveData();}} />
         </View >
       </View>
     )

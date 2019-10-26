@@ -22,7 +22,8 @@ export class MainScreen extends React.Component {
       longitudeDelta: defaultLongitudeDelta,
       tmpLatitude: null,
       tmpLongitude: null,
-      markers: []
+      markers: [],
+      settingInfo: {}
     };
     this.camera = {
       latitude: defaultLatitude,
@@ -34,6 +35,19 @@ export class MainScreen extends React.Component {
       latitude : defaultLatitude, 
       longitude : defaultLongitude
     }
+
+    this.settingInfo = {};
+    this.selectedMarkerId = 0;
+    this.selectedMarker = {
+      id: "0",
+      coordinate: {latitude: null, longitude: null},
+      date: "2016-05-15",
+      time: "8:16 PM",
+      musicId: "your world is",
+      title: "title"
+    }
+
+    this.loadMarkers = this.loadMarkers.bind(this);
 
     this.moveToCurrentPosition();
     this.loadMarkers()
@@ -78,28 +92,33 @@ export class MainScreen extends React.Component {
     return position;
   }
 
-  loadMarkers = () => {
-    global.storage
-      .load({ key: 'mapInfo' })
-      .then(res => {
-        newMarkers = [];
-        res.map(obj => {
-          newMarkers.push(
-            {
-              // key: Date.now(),
-              id: obj.id,
-              latlng: {
-                latitude: obj.place.latitude,
-                longitude: obj.place.longitude
-              },
-              title: "♪ " + obj.musicId,
-              description: "date:" + obj.time.date + ' time: ' + obj.time.time
-            }
-          )
-        })
-        this.setState({ markers: newMarkers })
-      })
-      .catch(err => console.warn(err))
+  async loadMarkers() {
+    const markers = await global.storage.load({ key: 'mapInfo' });
+    this.setState({markers});
+    console.log(markers);
+    
+    // TODO: この形式にしたがって、Calloutにタイトルをつける
+    // global.storage
+    //   .load({ key: 'mapInfo' })
+    //   .then(res => {
+    //     newMarkers = [];
+    //     res.map(obj => {
+    //       newMarkers.push(
+    //         {
+    //           // key: Date.now(),
+    //           id: obj.id,
+    //           latlng: {
+    //             latitude: obj.coordinate.latitude,
+    //             longitude: obj.coordinate.longitude
+    //           },
+    //           title: "♪ " + obj.musicId,
+    //           description: "date:" + obj.time.date + ' time: ' + obj.time.time
+    //         }
+    //       )
+    //     })
+    //     this.setState({ markers: newMarkers })
+    //   })
+    //   .catch(err => console.warn(err))
   }
 
   async storeMarker(marker) {
@@ -107,10 +126,10 @@ export class MainScreen extends React.Component {
 
     // TODO: O(n) -> O(1) ：キー情報を付与するなどして
     let exist = false;
-    for(m of markers) {
-      if(m.id !== marker.id)  continue;
+    for(let i = 0; i < markers.length; i++) {
+      if(markers[i].id !== marker.id)  continue;
       exist = true;
-      m = marker;
+      markers[i] = marker;
       break;
     }
     if(!exist)  markers.push(marker);
@@ -120,7 +139,7 @@ export class MainScreen extends React.Component {
 
   isNear(obj, c_lat, c_lng) {
     const dist = getDistance(
-      {latitude: obj.place.latitude, longitude: obj.place.longitude},
+      {latitude: obj.coordinate.latitude, longitude: obj.coordinate.longitude},
       {latitude: c_lat, longitude: c_lng}
     );
     console.log(dist);
@@ -186,7 +205,7 @@ export class MainScreen extends React.Component {
   async moveMarker(index, coordinate) {
     const {latitude, longitude} = coordinate;
     let markers = await global.storage.load({ key: 'mapInfo' });
-    markers[index].place = {latitude, longitude};
+    markers[index].coordinate = {latitude, longitude};
     global.storage.save({ key: 'mapInfo', data: markers });
     this.loadMarkers();
   }
@@ -204,6 +223,11 @@ export class MainScreen extends React.Component {
     this.setState({markers: []});
   }
 
+  async openSettingsModal(info) {
+    await this.setState({settingInfo: info});
+    this.refs.modal.open();
+  }
+
   render() {
     return (
       <View style={styles.Main}>
@@ -219,27 +243,27 @@ export class MainScreen extends React.Component {
           showsUserLocation={true}
           showsMyLocationButton={true}
           onRegionChangeComplete={(position) => { this.setCameraPosition(position); }}
-          onLongPress={(coords, pos) => {
-            this.setState({
-              tmpLatitude: coords.nativeEvent.coordinate.latitude,
-              tmpLongitude: coords.nativeEvent.coordinate.longitude
-            });
+          onLongPress={ event => {
             this.syncCameraPosition();
-            this.refs.modal.open();
+            const settingInfo = {coordinate : event.nativeEvent.coordinate};
+            this.openSettingsModal(settingInfo);
           }
           }
         >
           {this.state.markers.map((marker, index) => (
             <Marker draggable
               identifier={marker.id}
-              coordinate={marker.latlng}
+              coordinate={marker.coordinate}
               title={marker.title}
               onDragEnd={(event) => {this.moveMarker(index, event.nativeEvent.coordinate)}}
+              onPress={() => {this.setState({settingInfo: this.state.markers[index]})}}
+              // onPress={this.selectedMarker = this.state.markers[index]}
             >
               <Callout>
                 <View>
-                  <Text>{this.state.markers[index].description + " : " + index}</Text>
+                  <Text>{this.state.markers[index].title + " : " + index}</Text>
                   <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Remove" onPress={() => { this.removeMarker(index); }} />
+                  <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Edit" onPress={() => { this.openSettingsModal(this.state.settingInfo); }} />
                 </View>
               </Callout>
             </Marker>
@@ -257,7 +281,8 @@ export class MainScreen extends React.Component {
               storeMarker={this.storeMarker}
               closeModal={this.closeModal}
               loadMarkers={this.loadMarkers}
-              lat={this.state.tmpLatitude} lng={this.state.tmpLongitude}/>
+              info={this.state.settingInfo}
+            />
           </ScrollView>
         </Modal>
       </View>
