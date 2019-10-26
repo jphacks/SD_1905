@@ -39,8 +39,7 @@ export class SettingScreen extends React.Component {
   settingMusicId = (_musicId) => { this.setState({ time: _musicId }) }
 
   saveData = () => {
-    this.newData = [
-      {
+    this.newData = {
         // id: Date.now().toString,
         id: Date.now().toString(),
         time: {
@@ -52,9 +51,8 @@ export class SettingScreen extends React.Component {
           longitude: this.state.longitude,
         },
         musicId: this.state.musicId
-      }
-    ]
-    this.props.storeNewData(this.newData);
+    }
+    this.props.storeMarker(this.newData);
     this.props.closeModal();
     Alert.alert("Success", "set the music in your world !!!")
   }

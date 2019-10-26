@@ -102,36 +102,20 @@ export class MainScreen extends React.Component {
       .catch(err => console.warn(err))
   }
 
-  storeNewdata = (obj) => {
-    global.storage
-      .load({ key: 'mapInfo' })
-      .then(res => {
-        ret = res;
-        ret = res.concat(obj);
-        // console.log("created data (obj)");
-        // console.log(tmp);
-        global.storage.save({
-          key:
-            'mapInfo',
-          data: ret
-        })
-          .then(() => {
-            this.loadMarkers();
-          })
-      })
-      .catch(err => {
-        global.storage.save(
-          {
-            key:
-              'mapInfo',
-            data: obj
-          }
-        )
-          .then(() => {
-            this.loadMarkers();
-          });
-        console.warn(err);
-      })
+  async storeMarker(marker) {
+    let markers = await global.storage.load({ key: 'mapInfo' });
+
+    // TODO: O(n) -> O(1) ：キー情報を付与するなどして
+    let exist = false;
+    for(m of markers) {
+      if(m.id !== marker.id)  continue;
+      exist = true;
+      m = marker;
+      break;
+    }
+    if(!exist)  markers.push(marker);
+    await global.storage.save({ key: 'mapInfo', data: markers });
+    this.loadMarkers();
   }
 
   isNear(obj, c_lat, c_lng) {
@@ -270,7 +254,7 @@ export class MainScreen extends React.Component {
         <Modal style={styles.modal} position={"bottom"} ref={"modal"} swipeArea={20}>
           <ScrollView width={screen.width}>
             <SettingScreen
-              storeNewData={this.storeNewdata}
+              storeMarker={this.storeMarker}
               closeModal={this.closeModal}
               loadMarkers={this.loadMarkers}
               lat={this.state.tmpLatitude} lng={this.state.tmpLongitude}/>
