@@ -26,6 +26,7 @@ export class MainScreen extends React.Component {
       tmpLongitude: null,
       markers: [],
       settingInfo: {},
+      dontPlay: false
     };
     this.camera = {
       latitude: defaultLatitude,
@@ -154,6 +155,7 @@ export class MainScreen extends React.Component {
   }
 
   async checker() {
+    if (this.state.dontPlay) return;
     const playbackState = Spotify.getPlaybackState();
     if (playbackState != null && playbackState.playing) return;
 
@@ -294,8 +296,8 @@ export class MainScreen extends React.Component {
           <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="現在地へ移動" onPress={() => { this.moveToCurrentPosition();}} />
           <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="ここで登録" onPress={() => { this.storeCurrentPosition(); }} />
           <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="ピンを削除" onPress={() => {this.removeAllMarkers();}}/>
-          <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="再生" onPress={() => {Spotify.setPlaying(true);}}/>
-          <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="停止" onPress={() => {Spotify.setPlaying(false);}}/>
+          <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="再生" onPress={() => {Spotify.setPlaying(true); this.syncCameraPosition(); this.setState({dontPlay: false}); }}/>
+          <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="停止" onPress={() => {Spotify.setPlaying(false); this.syncCameraPosition(); this.setState({dontPlay: true}); }}/>
         </View>
         <Modal style={styles.modal} position={"bottom"} ref={"modal"} swipeArea={20}>
           <ScrollView width={screen.width}>
