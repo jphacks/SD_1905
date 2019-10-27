@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, ScrollView, Dimensions, TextInput} from 'react-native';
+import { StyleSheet, Text, View, Alert, ScrollView, Dimensions, TextInput, Image} from 'react-native';
 import { Button } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
@@ -268,12 +268,19 @@ export class MainScreen extends React.Component {
             >
               <Callout>
                 <View>
-                  <Text>{'Date: ' + this.state.markers[index].date}</Text>
-                  <Text>{'Time: ' + this.state.markers[index].time}</Text>
+                  <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                    <View style={styles.jacket}>
+                      <Image source={{uri: this.state.markers[index].imageUrl}} style={{width: 50, height: 50}} />
+                    </View>
+                    <View>
+                      <Text>{'Title: ' + this.state.markers[index].title}</Text>
+                      <Text>{'Time: ' + this.state.markers[index].time}</Text>
+                      <Text>{'Date: ' + this.state.markers[index].date}</Text>
+                    </View>
+                  </View>
                   <Text>{'♪ ' + this.state.markers[index].musicId}</Text>
-                  <Text>{'Title: ' + this.state.markers[index].title}</Text>
                   <Text>{'Artist: ' + this.state.markers[index].artist}</Text>
-                  <Text>{'ImageUrl: ' + this.state.markers[index].imageUrl}</Text>
+                  {/* <Text>{'ImageUrl: ' + this.state.markers[index].imageUrl}</Text> */}
                   <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Remove" onPress={() => { this.removeMarker(index); }} />
                   <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Edit" onPress={() => { this.openSettingsModal(this.state.settingInfo); }} />
                 </View>

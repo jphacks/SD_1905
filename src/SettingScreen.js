@@ -72,19 +72,16 @@ export class SettingScreen extends React.Component {
     }
     return (
       <View style={styles.Setting}>
-        {/* <View style={{ flex: 1, backgroundColor: '#FF00FF', justifyContent: 'center', alignItems: 'center', margin: 0 }}> */}
-        <View style={styles.jacket}>
-          <Image source={{uri: this.state.imageUrl}} style={{width: 300, height: 300}} />
-        </View>
-        {/* <Button title={this.state.musicId} onPress={() => this.refs.modal1.open()} />
+        <View style={{ flex: 1, backgroundColor: '#FF00FF', justifyContent: 'center', alignItems: 'center', margin: 0 }}>
+        <Button title={this.state.musicId} onPress={() => this.refs.modal1.open()} />
         <Modal style={styles.modal} position={"center"} backdrop={true} ref={"modal1"} swipeArea={20} coverScreen={true}>
           <ScrollView width={screen.width}>
             <View>
             { trackJSX }
             </View>
           </ScrollView>
-        </Modal> */}
-        {/* </View > */}
+        </Modal>
+        </View >
         <View style={{ flex: 1.3, backgroundColor: '#00FF00', justifyContent: 'space-evenly', alignItems: 'center', margin: 0 }}>
           <Time settingDate={this.settingDate} settingTime={this.settingTime}></Time>
         </View >
@@ -121,7 +118,7 @@ const styles = StyleSheet.create({
     paddingBottom: 50,
     backgroundColor: '#FFFFFF'
   },
-  
+
   modal: {
     justifyContent: 'center',
     alignItems: 'center',
