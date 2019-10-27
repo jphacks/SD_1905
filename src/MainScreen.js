@@ -259,12 +259,16 @@ export class MainScreen extends React.Component {
               coordinate={marker.coordinate}
               title={marker.title}
               onDragEnd={(event) => {this.moveMarker(index, event.nativeEvent.coordinate)}}
-              onPress={() => {this.setState({settingInfo: this.state.markers[index]})}}
+              onPress={() => {
+                this.syncCameraPosition();
+                this.setState({settingInfo: this.state.markers[index]});
+              }}
               // onPress={this.selectedMarker = this.state.markers[index]}
             >
               <Callout>
                 <View>
                   <Text>{'date: ' + this.state.markers[index].date}</Text>
+                  <Text>{'time: ' + this.state.markers[index].time}</Text>
                   <Text>{'♪ ' + this.state.markers[index].musicId}</Text>
                   <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Remove" onPress={() => { this.removeMarker(index); }} />
                   <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Edit" onPress={() => { this.openSettingsModal(this.state.settingInfo); }} />

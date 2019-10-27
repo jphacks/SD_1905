@@ -26,7 +26,8 @@ export class SettingScreen extends React.Component {
       date: null,
       time: null,
       musicId: "your world is",
-      title: "title"
+      title: "title",
+      spotifyURI: null
     }
     Object.assign(this.state, this.props.info);
   }
