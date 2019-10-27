@@ -335,7 +335,10 @@ const styles = StyleSheet.create({
   modal: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: 500,
+    height: 400,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    overflow: 'hidden'
   },
   calloutView: {
     flexDirection: "row",

@@ -94,23 +94,34 @@ export class SettingScreen extends React.Component {
     }
     return (
       <View style={styles.Setting}>
-        <View style={{ flex: 1, backgroundColor: '#FF0000', margin: 10}}>
-          <SpotifyView settingSpotifyID={this.settingSpotifyID} settingTitle={this.settingTitle} settingArtist={this.settingArtist} settingImageUrl={this.settingImageUrl}></SpotifyView>
+        <View style={{ width: '90%', marginLeft: '5%', paddingBottom: 10, borderBottomWidth: 2, borderColor: '#333' }}>
+          <Text style={{ marginLeft: 20, fontSize: 30, margin: 0, color: '#333'}}>Settings</Text>
         </View>
-        <View style={{ flex: 1, backgroundColor: '#FF00FF', justifyContent: 'center', alignItems: 'center', margin: 0 }}>
-        <Button title={this.state.musicId} onPress={() => this.refs.modal1.open()} />
-        <Modal style={styles.modal} position={"center"} backdrop={true} ref={"modal1"} swipeArea={20} coverScreen={true}>
-          <ScrollView width={screen.width}>
-            <View>
-            { trackJSX }
-            </View>
-          </ScrollView>
-        </Modal>
+
+        {/* Sample Music */}
+        <View style={styles.container}>
+          {/* <Text>Music: </Text> */}
+          <Button title={this.state.musicId} onPress={() => this.refs.modal1.open()} />
+          <Modal style={styles.modal} position={"center"} backdrop={true} ref={"modal1"} swipeArea={20} coverScreen={true}>
+            <ScrollView width={screen.width}>
+              <View>
+              { trackJSX }
+              </View>
+            </ScrollView>
+          </Modal>
         </View >
-        <View style={{ flex: 1.3, backgroundColor: '#00FF00', justifyContent: 'space-evenly', alignItems: 'center', margin: 0 }}>
+
+        <View style={styles.container}>
           <Time settingDate={this.settingDate} settingTime={this.settingTime}></Time>
         </View >
-        <View style={{ flex: 1, backgroundColor: '#FFFF00', justifyContent: 'center', alignItems: 'center', margin: 0 }}>
+
+        {/* Spotify */}
+        {/* <View style={{ flex: 1, backgroundColor: '#FF0000', margin: 10}}> */}
+        <View style={styles.container}>
+          <SpotifyView settingSpotifyID={this.settingSpotifyID} settingTitle={this.settingTitle} settingArtist={this.settingArtist} settingImageUrl={this.settingImageUrl}></SpotifyView>
+        </View>
+
+        <View style={styles.container}>
           <Button title="Save" onPress={() => {this.saveData();}} />
         </View >
       </View>
@@ -132,11 +143,20 @@ const styles = StyleSheet.create({
     margin: 0
   },
 
+  container: {
+    marginTop: 20,
+    flex: 1,
+    // backgroundColor: '#FF00FF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 0
+  },
+
   Setting: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'stretch',
-    paddingTop: 40,
+    paddingTop: 20,
     paddingBottom: 50,
     backgroundColor: '#FFFFFF'
   },

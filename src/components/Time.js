@@ -74,6 +74,7 @@ export class Time extends Component {
 
 const styles = StyleSheet.create({
   Pickers: {
+    // width: '80%',
     backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     // flexDirection: "colmun",

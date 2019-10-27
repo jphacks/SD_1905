@@ -74,9 +74,9 @@ export class SpotifyView extends React.Component {
     if (!this.state.spotifyLoggedIn) {
       return (
         <View style={styles.container}>
-          <Text style={styles.greeting}>
+          {/* <Text style={styles.greeting}>
             Hello! Log into your spotify
-          </Text>
+          </Text> */}
           <TouchableHighlight onPress={this.loginSpotify} style={styles.spotifyLoginButton}>
             <Text style={styles.spotifyLoginButtonText}>Log into Spotify</Text>
           </TouchableHighlight>
