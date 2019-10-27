@@ -273,19 +273,20 @@ export class MainScreen extends React.Component {
                 <View>
                   <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
                     <View style={styles.jacket}>
-                      <Image source={{uri: this.state.markers[index].imageUrl}} style={{width: 50, height: 50}} />
+                      <Image source={{uri: this.state.markers[index].imageUrl}} style={{width: 60, height: 60, marginRight: 8}} />
                     </View>
                     <View>
                       <Text>{'Title: ' + this.state.markers[index].title}</Text>
+                      <Text>{'Artist: ' + this.state.markers[index].artist}</Text>
                       <Text>{'Time: ' + this.state.markers[index].time}</Text>
                       <Text>{'Date: ' + this.state.markers[index].date}</Text>
                     </View>
                   </View>
-                  <Text>{'♪ ' + this.state.markers[index].musicId}</Text>
-                  <Text>{'Artist: ' + this.state.markers[index].artist}</Text>
-                  {/* <Text>{'ImageUrl: ' + this.state.markers[index].imageUrl}</Text> */}
-                  <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Remove" onPress={() => { this.removeMarker(index); }} />
-                  <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Edit" onPress={() => { this.openSettingsModal(this.state.settingInfo); }} />
+                  <View style={{flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', marginTop: 10}}>
+
+                    <Button buttonStyle={{backgroundColor: 'red'}} titleStyle={{fontSize: 13, fontWeight: 'bold'}} type="solid"  title="Remove" onPress={() => { this.removeMarker(index); }} />
+                    <Button titleStyle={{fontSize: 13, fontWeight: 'bold'}} type="solid"   type="solid" title="Edit" onPress={() => { this.openSettingsModal(this.state.settingInfo); }} />
+                  </View>
                 </View>
               </Callout>
             </Marker>
