@@ -152,7 +152,14 @@ export class MainScreen extends React.Component {
   musicPlay = (spotifyID) => {
     this.syncCameraPosition();
     const spotifyURI = "spotify:track:" + spotifyID;
-    Spotify.playURI(spotifyURI, 0, 0);
+    Spotify.playURI(spotifyURI, 0, 0).
+      then(() => {
+        // success
+      })
+      .catch((error) => {
+        // fail
+        //Alert.alert("Error", error.message);
+      });
   }
 
   async checker() {
