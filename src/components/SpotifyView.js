@@ -62,6 +62,8 @@ export class SpotifyView extends React.Component {
       .then((res) => {
         this.props.settingSpotifyID(this.state.spotifyID);
         this.props.settingTitle(res.name);
+        this.props.settingArtist(res.album.artists[0].name)
+        this.props.settingImageUrl(res.album.images[0].url)
       })
       .catch((error) => {
         Alert.alert("Failet to get track.", error.message);

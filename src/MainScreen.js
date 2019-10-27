@@ -272,6 +272,8 @@ export class MainScreen extends React.Component {
                   <Text>{'Time: ' + this.state.markers[index].time}</Text>
                   <Text>{'♪ ' + this.state.markers[index].musicId}</Text>
                   <Text>{'Title: ' + this.state.markers[index].title}</Text>
+                  <Text>{'Artist: ' + this.state.markers[index].artist}</Text>
+                  <Text>{'ImageUrl: ' + this.state.markers[index].imageUrl}</Text>
                   <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Remove" onPress={() => { this.removeMarker(index); }} />
                   <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Edit" onPress={() => { this.openSettingsModal(this.state.settingInfo); }} />
                 </View>

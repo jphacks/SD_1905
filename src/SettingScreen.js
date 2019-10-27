@@ -27,6 +27,8 @@ export class SettingScreen extends React.Component {
       time: null,
       musicId: "your world is",
       title: "title",
+      artist: "",
+      imageUrl: "",
       spotifyID: null
     }
     Object.assign(this.state, this.props.info);
@@ -43,6 +45,10 @@ export class SettingScreen extends React.Component {
   settingSpotifyID = (_spotifyID) => { this.setState({ spotifyID: _spotifyID }) }
 
   settingTitle = (_title) => { this.setState({ title: _title }) }
+
+  settingArtist = (_artist) => { this.setState({ artist: _artist }) }
+
+  settingImageUrl = (_url) => { this.setState({ imageUrl: _url }) }
 
   async saveData() {
     if(this.state.id === null)  this.state.id = Date.now().toString();
@@ -76,7 +82,7 @@ export class SettingScreen extends React.Component {
         </Modal>
         </View >
         <View style={{ flex: 1, backgroundColor: '#FF0000', margin: 10}}>
-          <SpotifyView settingSpotifyID={this.settingSpotifyID} settingTitle={this.settingTitle}></SpotifyView>
+          <SpotifyView settingSpotifyID={this.settingSpotifyID} settingTitle={this.settingTitle} settingArtist={this.settingArtist} settingImageUrl={this.settingImageUrl}></SpotifyView>
         </View>
         <View style={{ flex: 1.3, backgroundColor: '#00FF00', justifyContent: 'space-evenly', alignItems: 'center', margin: 0 }}>
           <Time settingDate={this.settingDate} settingTime={this.settingTime}></Time>
