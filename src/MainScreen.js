@@ -293,6 +293,7 @@ export class MainScreen extends React.Component {
 
                     <Button buttonStyle={{backgroundColor: 'red'}} titleStyle={{fontSize: 13, fontWeight: 'bold'}} type="solid"  title="Remove" onPress={() => { this.removeMarker(index); }} />
                     <Button titleStyle={{fontSize: 13, fontWeight: 'bold'}} type="solid"   type="solid" title="Edit" onPress={() => { this.openSettingsModal(this.state.settingInfo); }} />
+                    <Button titleStyle={{fontSize: 13, fontWeight: 'bold'}} type="solid"   type="solid" title="再生" onPress={() => { Spotify.setPlaying(true); this.syncCameraPosition(); this.setState({dontPlay: false}); Spotify.playURI("spotify:track:" + this.state.markers[index].spotifyID, 0, 0); }} />
                   </View>
                 </View>
               </Callout>
