@@ -1,7 +1,5 @@
 # Music @
-
-[![Product Name](image.png)](https://www.youtube.com/watch?v=G5rULR53uMk)
-
+[YouTube動画リンク](https://youtu.be/q3ngb08tuZI)
 ## 製品概要
 ### 世界×音楽×Tech
 
