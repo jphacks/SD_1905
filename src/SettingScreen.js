@@ -94,6 +94,9 @@ export class SettingScreen extends React.Component {
     }
     return (
       <View style={styles.Setting}>
+        <View style={{ flex: 1, backgroundColor: '#FF0000', margin: 10}}>
+          <SpotifyView settingSpotifyID={this.settingSpotifyID} settingTitle={this.settingTitle} settingArtist={this.settingArtist} settingImageUrl={this.settingImageUrl}></SpotifyView>
+        </View>
         <View style={{ flex: 1, backgroundColor: '#FF00FF', justifyContent: 'center', alignItems: 'center', margin: 0 }}>
         <Button title={this.state.musicId} onPress={() => this.refs.modal1.open()} />
         <Modal style={styles.modal} position={"center"} backdrop={true} ref={"modal1"} swipeArea={20} coverScreen={true}>
@@ -110,9 +113,6 @@ export class SettingScreen extends React.Component {
         <View style={{ flex: 1, backgroundColor: '#FFFF00', justifyContent: 'center', alignItems: 'center', margin: 0 }}>
           <Button title="Save" onPress={() => {this.saveData();}} />
         </View >
-        <View style={{ flex: 1, backgroundColor: '#FF0000', margin: 10}}>
-          <SpotifyView settingSpotifyID={this.settingSpotifyID} settingTitle={this.settingTitle} settingArtist={this.settingArtist} settingImageUrl={this.settingImageUrl}></SpotifyView>
-        </View>
       </View>
     )
   }
