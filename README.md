@@ -1,4 +1,4 @@
-# サンプル（プロダクト名）
+# プロダクト名:Music @
 
 [![Product Name](image.png)](https://www.youtube.com/watch?v=G5rULR53uMk)
 
