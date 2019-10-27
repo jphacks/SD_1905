@@ -6,96 +6,92 @@ export class SpotifyView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      spotifyInitialized: false,
-      spotifyLoggedIn: true
+      spotifyID: null,
+      loggedIn: false,
     }
-    this.spotifyLoginButtonWasPressed = this.spotifyLoginButtonWasPressed.bind(this);
   }
 
   componentDidMount() {
-    this.initializeIfNeeded().catch((error) => {
-      Alert.alert("Error", error.message);
-    });
+    const loggedIn = Spotify.isLoggedIn();
+    this.setState({
+      spotifyLoggedIn: loggedIn
+    })
   }
 
-  spotifyLoginButtonWasPressed() {
-    // log into Spotify
-    Spotify.login().then((loggedIn) => {
-      if (loggedIn) {
-        // logged in
-        this.setState({
-          spotifyLoggedIn: true
-        })
-      }
-      else {
-        // cancelled
-      }
-    }).catch((error) => {
-      Alert.alert("Error", error.message);
-    });
-  }
-
-  async initializeIfNeeded() {
-    // initialize Spotify if it hasn't been initialized yet
-    if (!await Spotify.isInitializedAsync()) {
-      // initialize spotify
-      const spotifyOptions = {
-        "clientID": "41e45372be8a404c9ce69009e017f353",
-        "sessionUserDefaultsKey": "SpotifySession",
-        "redirectURL": "examplespotifyapp://auth",
-        "scopes": ["user-read-private", "playlist-read", "playlist-read-private", "streaming"],
-      };
-      const loggedIn = await Spotify.initialize(spotifyOptions);
-      // update UI state
-      this.setState({
-        spotifyInitialized: true,
-        spotifyLoggedIn: loggedIn
+  loginSpotify = () => {
+    const loggedIn = Spotify.isLoggedIn();
+    if (!loggedIn) {
+      Spotify.login().then((loggedIn) => {
+        if (loggedIn) {
+          this.setState({
+            spotifyLoggedIn: true
+          })
+        }
+        else {
+          // cancelled
+        }
+      }).catch((error) => {
+        Alert.alert("Error", error.message);
       });
     }
     else {
-      const loggedIn = await Spotify.isLoggedIn();
-      // update UI state
       this.setState({
-        spotifyInitialized: true,
-        spotifyLoggedIn: loggedIn
-      });
+        spotifyLoggedIn: true
+      })
     }
   }
 
+  onChangeURI = (uri) => {
+    let spotifyID;
+    if (uri.slice(0, 14) == "spotify:track:") {
+      spotifyID = uri.slice(14);
+    }
+    else if (uri.slice(0, 31) == "https://open.spotify.com/track/") {
+      spotifyID = (uri.split('/').pop()).split('?')[0]
+    }
+    else {
+      spotifyID = uri
+    }
+    this.setState({
+      spotifyID: spotifyID
+    })
+  }
+
+  onEndEditing = () => {
+    Spotify.getTrack(this.state.spotifyID)
+      .then((res) => {
+        this.props.settingSpotifyID(this.state.spotifyID);
+        this.props.settingTitle(res.name);
+      })
+      .catch((error) => {
+        Alert.alert("Failet to get track.", error.message);
+      });
+  }
+
   render() {
-    if (!this.state.spotifyInitialized) {
+    if (!this.state.spotifyLoggedIn) {
       return (
         <View style={styles.container}>
-          <Text style={styles.loadMessage}>
-            Loading...
-					</Text>
+          <Text style={styles.greeting}>
+            Hello! Log into your spotify
+          </Text>
+          <TouchableHighlight onPress={this.loginSpotify} style={styles.spotifyLoginButton}>
+            <Text style={styles.spotifyLoginButtonText}>Log into Spotify</Text>
+          </TouchableHighlight>
         </View>
       );
     }
     else {
-      if (!this.state.spotifyLoggedIn) {
-        return (
-          <View style={styles.container}>
-            <Text style={styles.greeting}>
-              Hey! You! Log into your spotify
-            </Text>
-            <TouchableHighlight onPress={this.spotifyLoginButtonWasPressed} style={styles.spotifyLoginButton}>
-              <Text style={styles.spotifyLoginButtonText}>Log into Spotify</Text>
-            </TouchableHighlight>
-          </View>
-        );
-      }
-      else {
-        return (
-          <View style={styles.container}>
-            <TextInput
-              style={{ height: 30, width: 300, borderColor: 'gray', borderWidth: 1 }}
-              onChangeText={text => this.props.settingSpotifyURI(text)}
-              placeholder={'Spotify URIを入力してください。'}
-            />
-          </View>
-        )
-      }
+      return (
+        <View style={styles.container}>
+          <TextInput
+            style={{ height: 30, width: 300, borderColor: 'gray', borderWidth: 1 }}
+            onChangeText={(text) => {this.onChangeURI(text)}}
+            placeholder={'Spotify URIを入力してください。'}
+            onEndEditing={() => this.onEndEditing()}
+          />
+        </View>
+      )
     }
   }
 }
@@ -106,15 +102,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
-  },
-
-  loadIndicator: {
-    //
-  },
-  loadMessage: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
   },
 
   spotifyLoginButton: {

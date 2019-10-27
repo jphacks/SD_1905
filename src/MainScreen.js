@@ -25,7 +25,7 @@ export class MainScreen extends React.Component {
       tmpLatitude: null,
       tmpLongitude: null,
       markers: [],
-      settingInfo: {}
+      settingInfo: {},
     };
     this.camera = {
       latitude: defaultLatitude,
@@ -148,7 +148,8 @@ export class MainScreen extends React.Component {
     }
   }
 
-  musicPlay = (spotifyURI) => {
+  musicPlay = (spotifyID) => {
+    const spotifyURI = "spotify:track:" + spotifyID;
     Spotify.playURI(spotifyURI, 0, 0);
   }
 
@@ -172,8 +173,8 @@ export class MainScreen extends React.Component {
             // musicPlay(obj.musicId)
             // Alert.alert(obj.musicId)
             console.log('hit!! ' + obj.musicId)
-            if (obj.spotifyURI != null) {
-              this.musicPlay(obj.spotifyURI)
+            if (obj.spotifyID != null) {
+              this.musicPlay(obj.spotifyID)
             }
           }
           else {
@@ -267,9 +268,10 @@ export class MainScreen extends React.Component {
             >
               <Callout>
                 <View>
-                  <Text>{'date: ' + this.state.markers[index].date}</Text>
-                  <Text>{'time: ' + this.state.markers[index].time}</Text>
+                  <Text>{'Date: ' + this.state.markers[index].date}</Text>
+                  <Text>{'Time: ' + this.state.markers[index].time}</Text>
                   <Text>{'♪ ' + this.state.markers[index].musicId}</Text>
+                  <Text>{'Title: ' + this.state.markers[index].title}</Text>
                   <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Remove" onPress={() => { this.removeMarker(index); }} />
                   <Button titleStyle={{fontWeight: 'bold'}} type="solid" title="Edit" onPress={() => { this.openSettingsModal(this.state.settingInfo); }} />
                 </View>
@@ -284,6 +286,7 @@ export class MainScreen extends React.Component {
           <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="ここで登録" onPress={() => { this.storeCurrentPosition(); }} />
           <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="forDebug" />
           <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="ピンを削除" onPress={() => {this.removeAllMarkers();}}/>
+          <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="再生" onPress={() => {Spotify.setPlaying(true);}}/>
           <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="停止" onPress={() => {Spotify.setPlaying(false);}}/>
         </View>
         <Modal style={styles.modal} position={"bottom"} ref={"modal"} swipeArea={20}>
