@@ -293,7 +293,6 @@ export class MainScreen extends React.Component {
         <View style={{ position: 'absolute', flexDirection: "row", left: 0, right: 0, bottom: 60, justifyContent: 'space-evenly' }}>
           <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="現在地へ移動" onPress={() => { this.moveToCurrentPosition();}} />
           <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="ここで登録" onPress={() => { this.storeCurrentPosition(); }} />
-          <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="forDebug" />
           <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="ピンを削除" onPress={() => {this.removeAllMarkers();}}/>
           <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="再生" onPress={() => {Spotify.setPlaying(true);}}/>
           <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="停止" onPress={() => {Spotify.setPlaying(false);}}/>

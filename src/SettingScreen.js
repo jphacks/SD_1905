@@ -9,13 +9,29 @@ import { thisExpression } from '@babel/types';
 const musicData =[];
 const screen = Dimensions.get('window');
 
-for(let i=0; i < 30; i++){ //テストデータ作成
-  musicData.push({
-    title: "musicTitle"+i,
-    artist: "artist"+i,
-    genre: "musicGenre"+i,
-    musicAlbum: "Album"+i,
-  });
+const sampleMusics = [
+  {
+    title: "Shape of You",
+    artist: "Ed Sheeran",
+    spotifyID: "7qiZfU4dY1lWllzX7mPBI3",
+    imageUrl: "https://i.scdn.co/image/ab67616d0000b273ba5db46f4b838ef6027e6f96",
+  },
+  {
+    title: "newdays - 2014 Live",
+    artist: "Schroeder-Headz",
+    spotifyID: "5aPFLbVhGQh6tdgjyXJBMw",
+    imageUrl: "https://i.scdn.co/image/ab67616d0000b27330b23a3580712d4632390e90",
+  },
+  {
+    title: "Overture (From Dragon Quest 4)",
+    artist: "Good Knight Productions",
+    spotifyID: "29FV12H9xKENRihhPr2NDg",
+    imageUrl: "https://i.scdn.co/image/ab67616d0000b2730456039f1c205ab523a9297e",
+  },
+]
+
+for(let i = 0; i < 3; i++){ //テストデータ作成
+  musicData.push(sampleMusics[i]);
 }
 
 export class SettingScreen extends React.Component {
@@ -26,7 +42,7 @@ export class SettingScreen extends React.Component {
       coordinate: {latitude: "0", longitude: "0"},
       date: null,
       time: null,
-      musicId: "your world is",
+      musicId: "Sample Music",
       title: "title",
       artist: "",
       imageUrl: "https://yt3.ggpht.com/a/AGF-l7-GzUSbLNsd66pJy2tnI6wMDBmu4rKgInMk8Q=s288-c-k-c0xffffffff-no-rj-mo",
@@ -59,7 +75,13 @@ export class SettingScreen extends React.Component {
   }
 
   setMusic = (num) => { 
-    this.setState({musicId: musicData[num].title}); 
+    this.setState({
+      musicId: musicData[num].title,
+      title: musicData[num].title,
+      artist: musicData[num].artist,
+      spotifyID: musicData[num].spotifyID,
+      imageUrl: musicData[num].imageUrl
+    }); 
     this.refs.modal1.close();
   }
 
@@ -67,7 +89,7 @@ export class SettingScreen extends React.Component {
     let trackJSX = [];
     for(let i=0; i < musicData.length; i++){
       trackJSX.push(
-        <Button title={"title: "+ musicData[i].title + " artist: "+ musicData[i].artist} onPress={this.setMusic.bind(this,i)}/>
+        <Button title={"Title: "+ musicData[i].title + " Artist: "+ musicData[i].artist} onPress={this.setMusic.bind(this,i)}/>
       );
     }
     return (
@@ -89,7 +111,7 @@ export class SettingScreen extends React.Component {
           <Button title="Save" onPress={() => {this.saveData();}} />
         </View >
         <View style={{ flex: 1, backgroundColor: '#FF0000', margin: 10}}>
-          <SpotifyView settingSpotifyID={this.settingSpotifyID} settingTitle={this.settingTitle}></SpotifyView>
+          <SpotifyView settingSpotifyID={this.settingSpotifyID} settingTitle={this.settingTitle} settingArtist={this.settingArtist} settingImageUrl={this.settingImageUrl}></SpotifyView>
         </View>
       </View>
     )
