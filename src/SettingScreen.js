@@ -1,9 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, ScrollView, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Alert, ScrollView, Dimensions, Image } from 'react-native';
 import { Button } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 import { Time } from './components/Time.js';
 import { SpotifyView } from './components/SpotifyView.js';
+import { thisExpression } from '@babel/types';
 
 const musicData =[];
 const screen = Dimensions.get('window');
@@ -28,7 +29,7 @@ export class SettingScreen extends React.Component {
       musicId: "your world is",
       title: "title",
       artist: "",
-      imageUrl: "",
+      imageUrl: "https://yt3.ggpht.com/a/AGF-l7-GzUSbLNsd66pJy2tnI6wMDBmu4rKgInMk8Q=s288-c-k-c0xffffffff-no-rj-mo",
       spotifyID: null
     }
     Object.assign(this.state, this.props.info);
@@ -71,25 +72,28 @@ export class SettingScreen extends React.Component {
     }
     return (
       <View style={styles.Setting}>
-        <View style={{ flex: 1, backgroundColor: '#FF00FF', justifyContent: 'center', alignItems: 'center', margin: 0 }}>
-        <Button title={this.state.musicId} onPress={() => this.refs.modal1.open()} />
+        {/* <View style={{ flex: 1, backgroundColor: '#FF00FF', justifyContent: 'center', alignItems: 'center', margin: 0 }}> */}
+        <View style={styles.jacket}>
+          <Image source={{uri: this.state.imageUrl}} style={{width: 300, height: 300}} />
+        </View>
+        {/* <Button title={this.state.musicId} onPress={() => this.refs.modal1.open()} />
         <Modal style={styles.modal} position={"center"} backdrop={true} ref={"modal1"} swipeArea={20} coverScreen={true}>
           <ScrollView width={screen.width}>
             <View>
             { trackJSX }
             </View>
           </ScrollView>
-        </Modal>
-        </View >
-        <View style={{ flex: 1, backgroundColor: '#FF0000', margin: 10}}>
-          <SpotifyView settingSpotifyID={this.settingSpotifyID} settingTitle={this.settingTitle} settingArtist={this.settingArtist} settingImageUrl={this.settingImageUrl}></SpotifyView>
-        </View>
+        </Modal> */}
+        {/* </View > */}
         <View style={{ flex: 1.3, backgroundColor: '#00FF00', justifyContent: 'space-evenly', alignItems: 'center', margin: 0 }}>
           <Time settingDate={this.settingDate} settingTime={this.settingTime}></Time>
         </View >
         <View style={{ flex: 1, backgroundColor: '#FFFF00', justifyContent: 'center', alignItems: 'center', margin: 0 }}>
           <Button title="Save" onPress={() => {this.saveData();}} />
         </View >
+        <View style={{ flex: 1, backgroundColor: '#FF0000', margin: 10}}>
+          <SpotifyView settingSpotifyID={this.settingSpotifyID} settingTitle={this.settingTitle}></SpotifyView>
+        </View>
       </View>
     )
   }
@@ -101,6 +105,14 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
   },
+
+  jacket: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 0
+  },
+
   Setting: {
     flex: 1,
     justifyContent: 'center',
@@ -109,6 +121,7 @@ const styles = StyleSheet.create({
     paddingBottom: 50,
     backgroundColor: '#FFFFFF'
   },
+  
   modal: {
     justifyContent: 'center',
     alignItems: 'center',
