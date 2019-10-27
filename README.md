@@ -53,7 +53,7 @@ Spotify APIを利用することによって、端末に保存されていない
 * ピンをクリックで様々な情報を表示 ([a98c81e3d37785a3dae8dac765771362f31338b8](https://github.com/jphacks/SD_1905/commit/a98c81e3d37785a3dae8dac765771362f31338b8))
 下記の画像のように、登録した音楽の情報や日時の設定を簡単に確認できるようにした。また、ピンの削除や移動、付与された情報の編集などは全て、ページを遷移することなく単一ページで行うことできる。
 
-<iframe src="htvtps://drive.google.com/file/d/1cqVcSf3ydKkME4i6vW3HMVUI8mQEOZFO/preview" width="300" height="500"></iframe>
+<iframe src="https://drive.google.com/file/d/1cqVcSf3ydKkME4i6vW3HMVUI8mQEOZFO/preview" width="300" height="500"></iframe>
 
 ## How to build
 
