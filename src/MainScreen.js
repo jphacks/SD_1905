@@ -150,14 +150,15 @@ export class MainScreen extends React.Component {
   }
 
   musicPlay = (spotifyID) => {
+    this.syncCameraPosition();
     const spotifyURI = "spotify:track:" + spotifyID;
     Spotify.playURI(spotifyURI, 0, 0);
   }
 
   async checker() {
-    if (this.state.dontPlay) return;
     const playbackState = Spotify.getPlaybackState();
     if (playbackState != null && playbackState.playing) return;
+    if (this.state.dontPlay) return;
 
     const position = await this.getCurrentPosition().then((position) => this.setPosition(position, false));
     const {latitude, longitude} = position.coords;
