@@ -71,7 +71,7 @@ export class SettingScreen extends React.Component {
           var musicList = res.tracks;
           for(let ttmmpp=0; ttmmpp<20;ttmmpp++){
             musicData.push({
-              title: musicList.items[ttmmpp]["album"]["name"],
+              title: musicList.items[ttmmpp]["name"],
               artist: musicList.items[ttmmpp]["album"]["artists"][0]["name"],
               spotifyID: musicList.items[ttmmpp]["id"],
               imageUrl: musicList.items[ttmmpp]["album"]["images"][2]["url"],
@@ -85,6 +85,12 @@ export class SettingScreen extends React.Component {
         );
         }
         this.refs.modal1.open(); 
+        }
+      )
+      .catch(
+        err => {
+          Alert.alert("Search failure");
+          console.log(err);
         }
       )
   }
