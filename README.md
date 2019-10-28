@@ -65,7 +65,7 @@ Spotify APIを利用することによって、端末に保存されていない
 * yarn >= 1.19.1
 
 ```
-$ git clone git@github.com:koyastick/jphacks.git && cd ./jphacks
+$ git clone git@github.com:jphacks/SD_1905.git && cd ./SD_1905
 $ yarn
 $ cd ios && pod install && cd ../
 $ react-native run-ios --simulator="iPhone 8 Plus"
