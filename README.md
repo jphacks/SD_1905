@@ -1,5 +1,5 @@
 # Music @
-[YouTube動画リンク](https://youtu.be/q3ngb08tuZI)
+[YouTube動画リンク](https://youtu.be/OEYtXuxBD4c)
 ## 製品概要
 ### 音楽×Techx世界
 
