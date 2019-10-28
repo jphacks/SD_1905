@@ -1,38 +1,15 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, ScrollView, Dimensions, Image } from 'react-native';
+import { StyleSheet, Text, View, Alert, ScrollView, Dimensions, Image , TextInput} from 'react-native';
 import { Button } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 import { Time } from './components/Time.js';
 import { SpotifyView } from './components/SpotifyView.js';
 import { thisExpression } from '@babel/types';
+import Spotify from 'rn-spotify-sdk';
 
 const musicData =[];
 const screen = Dimensions.get('window');
-
-const sampleMusics = [
-  {
-    title: "Shape of You",
-    artist: "Ed Sheeran",
-    spotifyID: "7qiZfU4dY1lWllzX7mPBI3",
-    imageUrl: "https://i.scdn.co/image/ab67616d0000b273ba5db46f4b838ef6027e6f96",
-  },
-  {
-    title: "newdays - 2014 Live",
-    artist: "Schroeder-Headz",
-    spotifyID: "5aPFLbVhGQh6tdgjyXJBMw",
-    imageUrl: "https://i.scdn.co/image/ab67616d0000b27330b23a3580712d4632390e90",
-  },
-  {
-    title: "Overture (From Dragon Quest 4)",
-    artist: "Good Knight Productions",
-    spotifyID: "29FV12H9xKENRihhPr2NDg",
-    imageUrl: "https://i.scdn.co/image/ab67616d0000b2730456039f1c205ab523a9297e",
-  },
-]
-
-for(let i = 0; i < 3; i++){ //テストデータ作成
-  musicData.push(sampleMusics[i]);
-}
+let trackJSX=[];
 
 export class SettingScreen extends React.Component {
   constructor(props) {
@@ -46,7 +23,8 @@ export class SettingScreen extends React.Component {
       title: "title",
       artist: "",
       imageUrl: "https://yt3.ggpht.com/a/AGF-l7-GzUSbLNsd66pJy2tnI6wMDBmu4rKgInMk8Q=s288-c-k-c0xffffffff-no-rj-mo",
-      spotifyID: null
+      spotifyID: null,
+      searchStatus: "",
     }
     Object.assign(this.state, this.props.info);
   }
@@ -85,13 +63,40 @@ export class SettingScreen extends React.Component {
     this.refs.modal1.close();
   }
 
-  render() {
-    let trackJSX = [];
-    for(let i=0; i < musicData.length; i++){
-      trackJSX.push(
+  async searchMusic(){
+    await Spotify.search(this.state.searchStatus,['track'])
+      .then(
+        res => {
+          musicData.length = 0;
+          var musicList = res.tracks;
+          for(let ttmmpp=0; ttmmpp<20;ttmmpp++){
+            musicData.push({
+              title: musicList.items[ttmmpp]["album"]["name"],
+              artist: musicList.items[ttmmpp]["album"]["artists"][0]["name"],
+              spotifyID: musicList.items[ttmmpp]["id"],
+              imageUrl: musicList.items[ttmmpp]["album"]["images"][2]["url"],
+            });
+
+          }
+        trackJSX.length = 0;
+        for(let i=0; i < musicData.length; i++){
+        trackJSX.push(
         <Button title={"Title: "+ musicData[i].title + " Artist: "+ musicData[i].artist} onPress={this.setMusic.bind(this,i)}/>
-      );
-    }
+        );
+        }
+        this.refs.modal1.open(); 
+        }
+      )
+  }
+
+  onChangeText = (text) => {
+    this.setState({
+      searchStatus: text,
+    })
+  }
+
+  render() {
+
     return (
       <View style={styles.Setting}>
         <View style={{ width: '90%', marginLeft: '5%', paddingBottom: 10, borderBottomWidth: 2, borderColor: '#333' }}>
@@ -101,7 +106,13 @@ export class SettingScreen extends React.Component {
         {/* Sample Music */}
         <View style={styles.container}>
           {/* <Text>Music: </Text> */}
-          <Button title={this.state.musicId} onPress={() => this.refs.modal1.open()} />
+          <TextInput 
+            value={this.state.searchStatus}
+            style={{ height: 30, width: "70%", borderColor: 'gray', borderWidth: 0.5, marginBottom: 10 }}
+            placeholder={"Search"}
+            onChangeText={(text) => {this.onChangeText(text)}}
+            />
+          <Button title="Search" onPress={() => {this.searchMusic();}} />
           <Modal style={styles.modal} position={"center"} backdrop={true} ref={"modal1"} swipeArea={20} coverScreen={true}>
             <ScrollView width={screen.width}>
               <View>
@@ -109,7 +120,7 @@ export class SettingScreen extends React.Component {
               </View>
             </ScrollView>
           </Modal>
-        </View >
+        </View>
 
         <View style={styles.container}>
           <Time settingDate={this.settingDate} settingTime={this.settingTime}></Time>
