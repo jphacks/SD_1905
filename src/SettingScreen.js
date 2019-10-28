@@ -112,7 +112,7 @@ export class SettingScreen extends React.Component {
             placeholder={"Search"}
             onChangeText={(text) => {this.onChangeText(text)}}
             />
-          <Button title="Search" onPress={() => {this.searchMusic();}} />
+          <Button title="Search Music" onPress={() => {this.searchMusic();}} />
           <Modal style={styles.modal} position={"center"} backdrop={true} ref={"modal1"} swipeArea={20} coverScreen={true}>
             <ScrollView width={screen.width}>
               <View>
