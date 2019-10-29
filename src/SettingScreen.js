@@ -68,7 +68,7 @@ export default class SettingScreen extends React.Component {
         trackJSX.length = 0;
         for(let idx=0; idx < musicData.length; idx++){
           trackJSX.push(
-            <Button title={"Title: "+ musicData[idx].title + " Artist: "+ musicData[idx].artist} onPress={this.onPressSetMusic.bind(this, idx)}/>
+            <Button key={idx} title={"Title: "+ musicData[idx].title + " Artist: "+ musicData[idx].artist} onPress={this.onPressSetMusic.bind(this, idx)}/>
           );
         }
         this.refs.modal1.open(); 

@@ -201,6 +201,7 @@ export default class MainScreen extends React.Component {
         >
           {this.state.markers.map((marker, index) => (
             <Marker draggable
+              key={index}
               identifier={marker.id}
               coordinate={marker.coordinate}
               title={marker.music.title}
