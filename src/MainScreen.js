@@ -22,22 +22,10 @@ export class MainScreen extends React.Component {
       longitude: defaultLongitude,
       latitudeDelta: defaultLatitudeDelta,
       longitudeDelta: defaultLongitudeDelta,
-      tmpLatitude: null,
-      tmpLongitude: null,
       markers: [],
       settingInfo: {},
       dontPlay: false
     };
-    this.camera = {
-      latitude: defaultLatitude,
-      longitude: defaultLongitude,
-      latitudeDelta: defaultLatitudeDelta,
-      longitudeDelta: defaultLongitudeDelta
-    };
-    this.realtimePosition = {
-      latitude : defaultLatitude, 
-      longitude : defaultLongitude
-    }
 
     this.settingInfo = {};
     this.selectedMarkerId = 0;
@@ -56,19 +44,6 @@ export class MainScreen extends React.Component {
     this.loadMarkers()
   }
 
-  setCameraPosition = (region) => {
-    this.camera = region
-  }
-
-  syncCameraPosition = () => {
-    this.setState({
-      latitude: this.camera.latitude,
-      longitude: this.camera.longitude,
-      latitudeDelta: this.camera.latitudeDelta,
-      longitudeDelta: this.camera.longitudeDelta,
-    })
-  }
-
   getCurrentPosition() {
     options = {
       enableHighAccuracy: true,
@@ -78,21 +53,6 @@ export class MainScreen extends React.Component {
     return new Promise((resolve, reject) => {
       Geolocation.getCurrentPosition(resolve, reject, options);
     });
-  }
-
-  async setPosition(position, update=true) {
-    this.realtimePosition = position.coords;
-    if(update) {
-      const {latitude, longitude} = position.coords;
-      this.setCameraPosition({
-        latitude: latitude,
-        longitude: longitude,
-        latitudeDelta: defaultLatitudeDelta,
-        longitudeDelta: defaultLongitudeDelta
-      })
-      this.syncCameraPosition();
-    }
-    return position;
   }
 
   async loadMarkers() {
@@ -150,7 +110,6 @@ export class MainScreen extends React.Component {
   }
 
   musicPlay = (spotifyID) => {
-    this.syncCameraPosition();
     const spotifyURI = "spotify:track:" + spotifyID;
     Spotify.playURI(spotifyURI, 0, 0).
       then(() => {
@@ -167,7 +126,7 @@ export class MainScreen extends React.Component {
     if (playbackState != null && playbackState.playing) return;
     if (this.state.dontPlay) return;
 
-    const position = await this.getCurrentPosition().then((position) => this.setPosition(position, false));
+    const position = await this.getCurrentPosition();
     const {latitude, longitude} = position.coords;
     console.log('you\'re @ (latlng) ' + latitude + '/' + longitude);
     global.storage
@@ -200,7 +159,7 @@ export class MainScreen extends React.Component {
   }
 
   async moveToCurrentPosition() {
-    await this.getCurrentPosition().then((position) => this.setPosition(position, true));
+    await this.getCurrentPosition().then((position) => this.map.animateToRegion(position.coords));
   }
 
   componentDidMount() {
@@ -225,7 +184,7 @@ export class MainScreen extends React.Component {
   }
 
   async storeCurrentPosition() {
-    const position = await this.getCurrentPosition().then(position => this.setPosition(position, false));
+    const position = await this.getCurrentPosition();
     const {latitude, longitude} = position.coords;
     this.openSettingsModal({coordinate: {latitude, longitude}});
   }
@@ -246,8 +205,9 @@ export class MainScreen extends React.Component {
       <View style={styles.Main}>
         <MapView
           provider={PROVIDER_DEFAULT}
+          ref={ref => {this.map = ref;}}
           style={{ flex: 1 }}
-          region={{
+          initialRegion={{
             latitude: this.state.latitude,
             longitude: this.state.longitude,
             latitudeDelta: this.state.latitudeDelta,
@@ -256,9 +216,7 @@ export class MainScreen extends React.Component {
           showsUserLocation={true}
           showsMyLocationButton={true}
           userLocationAnnotationTitle={""}
-          onRegionChangeComplete={(position) => { this.setCameraPosition(position); }}
           onLongPress={ event => {
-            this.syncCameraPosition();
             const settingInfo = {coordinate : event.nativeEvent.coordinate};
             this.openSettingsModal(settingInfo);
           }
@@ -271,7 +229,6 @@ export class MainScreen extends React.Component {
               title={marker.title}
               onDragEnd={(event) => {this.moveMarker(index, event.nativeEvent.coordinate)}}
               onPress={() => {
-                this.syncCameraPosition();
                 this.setState({settingInfo: this.state.markers[index]});
               }}
               // onPress={this.selectedMarker = this.state.markers[index]}
@@ -293,12 +250,11 @@ export class MainScreen extends React.Component {
 
                     <Button buttonStyle={{backgroundColor: 'red'}} titleStyle={{fontSize: 13, fontWeight: 'bold'}} type="solid"  title="Remove" onPress={() => { this.removeMarker(index); }} />
                     <Button titleStyle={{fontSize: 13, fontWeight: 'bold'}} type="solid"   type="solid" title="Edit" onPress={() => { this.openSettingsModal(this.state.settingInfo); }} />
-                    <Button titleStyle={{fontSize: 13, fontWeight: 'bold'}} type="solid"   type="solid" title="再生" onPress={() => { Spotify.setPlaying(true); this.syncCameraPosition(); this.setState({dontPlay: false}); Spotify.playURI("spotify:track:" + this.state.markers[index].spotifyID, 0, 0); }} />
+                    <Button titleStyle={{fontSize: 13, fontWeight: 'bold'}} type="solid"   type="solid" title="再生" onPress={() => { Spotify.setPlaying(true); this.setState({dontPlay: false}); Spotify.playURI("spotify:track:" + this.state.markers[index].spotifyID, 0, 0); }} />
                   </View>
                 </View>
               </Callout>
             </Marker>
-
           ))}
         </MapView>
 
@@ -306,8 +262,8 @@ export class MainScreen extends React.Component {
           <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="現在地へ移動" onPress={() => { this.moveToCurrentPosition();}} />
           <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="ここで登録" onPress={() => { this.storeCurrentPosition(); }} />
           {/* <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="ピンを削除" onPress={() => {this.removeAllMarkers();}}/> */}
-          <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="再生" onPress={() => {Spotify.setPlaying(true); this.syncCameraPosition(); this.setState({dontPlay: false}); }}/>
-          <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="停止" onPress={() => {Spotify.setPlaying(false); this.syncCameraPosition(); this.setState({dontPlay: true}); }}/>
+          <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="再生" onPress={() => {Spotify.setPlaying(true); this.setState({dontPlay: false}); }}/>
+          <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="停止" onPress={() => {Spotify.setPlaying(false); this.setState({dontPlay: true}); }}/>
         </View>
         <Modal style={styles.modal} position={"bottom"} ref={"modal"} swipeArea={20}>
           <ScrollView width={screen.width}>
