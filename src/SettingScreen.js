@@ -8,6 +8,7 @@ import Time from './components/Time.js';
 import SpotifyView from './components/SpotifyView.js';
 
 const SCREEN = Dimensions.get('window');
+const DEFAULT_IMAGE_URL = "https://yt3.ggpht.com/a/AGF-l7-GzUSbLNsd66pJy2tnI6wMDBmu4rKgInMk8Q=s288-c-k-c0xffffffff-no-rj-mo";
 let musicData =[];
 let trackJSX=[];
 
@@ -16,42 +17,37 @@ export default class SettingScreen extends React.Component {
     super(props)
     this.state = {
       id: null,
-      coordinate: {latitude: "0", longitude: "0"},
-      date: null,
-      time: null,
-      musicId: "Sample Music",
-      title: "title",
-      artist: "",
-      imageUrl: "https://yt3.ggpht.com/a/AGF-l7-GzUSbLNsd66pJy2tnI6wMDBmu4rKgInMk8Q=s288-c-k-c0xffffffff-no-rj-mo",
-      spotifyID: null,
+      coordinate: {
+        latitude: 0,
+        longitude: 0
+      },
+      time: {
+        date: null,
+        time: null
+      },
+      music: {
+        spotifyID: null,
+        title: null,
+        artist: null,
+        imageUrl: DEFAULT_IMAGE_URL,
+      },
       searchStatus: "",
     }
     Object.assign(this.state, this.props.info);
   }
 
-  setDate = (_date) => { this.setState({ date: _date }) }
-  setTime = (_time) => { this.setState({ time: _time }) }
-  setMusicId = (_musicId) => { this.setState({ musicId: _musicId }) }
-  setSpotifyID = (_spotifyID) => { this.setState({ spotifyID: _spotifyID }) }
-  setTitle = (_title) => { this.setState({ title: _title }) }
-  setArtist = (_artist) => { this.setState({ artist: _artist }) }
-  setImageUrl = (_imageUrl) => { this.setState({ imageUrl: _imageUrl }) }
+  setTime = (time) => { this.setState({ time: time }) };
+  setMusic = (music) => { this.setState({ music: music }) };
 
   saveData = async () => {
-    if(this.state.id === null)  this.state.id = Date.now().toString();
+    if(this.state.id === null) this.state.id = Date.now().toString();
     this.props.storeMarker(this.state);
     this.props.closeModal();
     Alert.alert("Success", "set the music in your world !!!")
   }
 
-  setMusic = (num) => { 
-    this.setState({
-      musicId: musicData[num].title,
-      title: musicData[num].title,
-      artist: musicData[num].artist,
-      spotifyID: musicData[num].spotifyID,
-      imageUrl: musicData[num].imageUrl
-    }); 
+  onPressSetMusic = (num) => {
+    this.setState({ music: musicData[num] });
     this.refs.modal1.close();
   }
 
@@ -70,9 +66,9 @@ export default class SettingScreen extends React.Component {
             });
           }
         trackJSX.length = 0;
-        for(let i=0; i < musicData.length; i++){
+        for(let idx=0; idx < musicData.length; idx++){
           trackJSX.push(
-            <Button title={"Title: "+ musicData[i].title + " Artist: "+ musicData[i].artist} onPress={this.setMusic.bind(this,i)}/>
+            <Button title={"Title: "+ musicData[idx].title + " Artist: "+ musicData[idx].artist} onPress={this.onPressSetMusic.bind(this, idx)}/>
           );
         }
         this.refs.modal1.open(); 
@@ -119,21 +115,13 @@ export default class SettingScreen extends React.Component {
         </View>
 
         <View style={styles.container}>
-          <Time
-            setDate={this.setDate}
-            setTime={this.setTime}>
-          </Time>
+          <Time time={this.state.time} setTime={this.setTime}></Time>
         </View >
 
         {/* Spotify */}
         {/* <View style={{ flex: 1, backgroundColor: '#FF0000', margin: 10}}> */}
         <View style={styles.container}>
-          <SpotifyView
-            setSpotifyID={this.setSpotifyID}
-            setTitle={this.setTitle}
-            setArtist={this.setArtist}
-            setImageUrl={this.setImageUrl}>
-          </SpotifyView>
+          <SpotifyView spotifyID={this.state.music.spotifyID} setMusic={this.setMusic}></SpotifyView>
         </View>
 
         <View style={styles.container}>

@@ -28,10 +28,12 @@ export default class MainScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      latitude: DEFAULT_LATITUDE,
-      longitude: DEFAULT_LONGITUDE,
-      latitudeDelta: DEFAULT_LATITUDE_DELTA,
-      longitudeDelta: DEFAULT_LONGITUDE_DELTA,
+      region: {
+        latitude: DEFAULT_LATITUDE,
+        longitude: DEFAULT_LONGITUDE,
+        latitudeDelta: DEFAULT_LATITUDE_DELTA,
+        longitudeDelta: DEFAULT_LONGITUDE_DELTA,
+      },
       markers: [],
       settingInfo: {},
       dontPlay: false
@@ -74,27 +76,26 @@ export default class MainScreen extends React.Component {
     this.loadMarkers();
   }
 
-  isNear(obj, c_lat, c_lng) {
+  isNear(tarLat, tarLng, curLat, curLng) {
     const dist = getDistance(
-      {latitude: obj.coordinate.latitude, longitude: obj.coordinate.longitude},
-      {latitude: c_lat, longitude: c_lng}
+      {latitude: tarLat, longitude: tarLng},
+      {latitude: curLat, longitude: curLng}
     );
     console.log("dist: " + dist);
     if(dist <= NEAR_DIST) return true;
     else return false;
   }
 
-  isDateTime(obj) {
-    const {date, time} = obj;
-    const now = new Date()
-    const currentDate = moment(now).format("YYYY-MM-DD");
-    const currentTime = moment(now).format("h:mm A")
+  isDateTime(date, time) {
+    const now = new Date();
+    const curDate = moment(now).format("YYYY-MM-DD");
+    const curTime = moment(now).format("h:mm A");
 
-    let isDate = false
-    let isTime = false
+    let isDate = false;
+    let isTime = false;
 
-    if (date == null || date == currentDate) isDate = true;
-    if (time == null || time == currentTime) isTime = true;
+    if (date == null || date == curDate) isDate = true;
+    if (time == null || time == curTime) isTime = true;
 
     if (isDate == true && isTime == true) return true;
     else return false;
@@ -124,11 +125,10 @@ export default class MainScreen extends React.Component {
       .then(res => {
         console.log('informations')
         res.map(obj => {
-          if (this.isNear(obj, latitude, longitude) && this.isDateTime(obj)) {
-            this.setState({ musicId: obj.musicId })
-            console.log('hit!! ' + obj.musicId)
-            if (obj.spotifyID != null) {
-              this.playMusic(obj.spotifyID)
+          if (this.isNear(obj.coordinate.latitude, obj.coordinate.longitude, latitude, longitude) && this.isDateTime(obj.time.date, obj.time.time)) {
+            console.log('hit!! ' + obj.music.title)
+            if (obj.music.spotifyID != null) {
+              this.playMusic(obj.music.spotifyID)
             }
           }
           else {
@@ -168,7 +168,7 @@ export default class MainScreen extends React.Component {
     this.setState({markers: []});
   }
 
-  async storeCurrentPosition() {
+  async registerCurrentPosition() {
     const position = await this.getCurrentPosition();
     const {latitude, longitude} = position.coords;
     this.openSettingsModal({coordinate: {latitude, longitude}});
@@ -190,12 +190,7 @@ export default class MainScreen extends React.Component {
           provider={PROVIDER_DEFAULT}
           ref={ref => {this.map = ref;}}
           style={{ flex: 1 }}
-          initialRegion={{
-            latitude: this.state.latitude,
-            longitude: this.state.longitude,
-            latitudeDelta: this.state.latitudeDelta,
-            longitudeDelta: this.state.longitudeDelta,
-          }}
+          initialRegion={this.state.region}
           showsUserLocation={true}
           showsMyLocationButton={true}
           userLocationAnnotationTitle={""}
@@ -208,7 +203,7 @@ export default class MainScreen extends React.Component {
             <Marker draggable
               identifier={marker.id}
               coordinate={marker.coordinate}
-              title={marker.title}
+              title={marker.music.title}
               onDragEnd={(event) => {this.moveMarker(index, event.nativeEvent.coordinate)}}
               onPress={() => {
                 this.setState({settingInfo: this.state.markers[index]});
@@ -217,19 +212,19 @@ export default class MainScreen extends React.Component {
                 <View>
                   <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
                     <View style={styles.jacket}>
-                      <Image source={{uri: this.state.markers[index].imageUrl}} style={{width: 60, height: 60, marginRight: 8}} />
+                      <Image source={{uri: this.state.markers[index].music.imageUrl}} style={{width: 60, height: 60, marginRight: 8}} />
                     </View>
                     <View>
-                      <Text>{'Title: ' + this.state.markers[index].title}</Text>
-                      <Text>{'Artist: ' + this.state.markers[index].artist}</Text>
-                      <Text>{'Time: ' + this.state.markers[index].time}</Text>
-                      <Text>{'Date: ' + this.state.markers[index].date}</Text>
+                      <Text>{'Title: ' + this.state.markers[index].music.title}</Text>
+                      <Text>{'Artist: ' + this.state.markers[index].music.artist}</Text>
+                      <Text>{'Time: ' + this.state.markers[index].time.time}</Text>
+                      <Text>{'Date: ' + this.state.markers[index].time.date}</Text>
                     </View>
                   </View>
                   <View style={{flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', marginTop: 10}}>
                     <Button buttonStyle={{backgroundColor: 'red'}} titleStyle={{fontSize: 13, fontWeight: 'bold'}} type="solid" title="Remove" onPress={() => { this.removeMarker(index); }} />
                     <Button titleStyle={{fontSize: 13, fontWeight: 'bold'}} type="solid" title="Edit" onPress={() => { this.openSettingsModal(this.state.settingInfo); }} />
-                    <Button titleStyle={{fontSize: 13, fontWeight: 'bold'}} type="solid" title="再生" onPress={() => { this.setState({dontPlay: false}); this.playMusic(this.state.markers[index].spotifyID); }} />
+                    <Button titleStyle={{fontSize: 13, fontWeight: 'bold'}} type="solid" title="再生" onPress={() => { this.setState({dontPlay: false}); this.playMusic(this.state.markers[index].music.spotifyID); }} />
                   </View>
                 </View>
               </Callout>
@@ -239,7 +234,7 @@ export default class MainScreen extends React.Component {
 
         <View style={{ position: 'absolute', flexDirection: "row", left: 0, right: 0, bottom: 60, justifyContent: 'space-evenly' }}>
           <Button titleStyle={styles.bottomButtonTitle} type="solid" title="現在地へ移動" onPress={() => { this.moveToCurrentPosition();}} />
-          <Button titleStyle={styles.bottomButtonTitle} type="solid" title="ここで登録" onPress={() => { this.storeCurrentPosition(); }} />
+          <Button titleStyle={styles.bottomButtonTitle} type="solid" title="ここで登録" onPress={() => { this.registerCurrentPosition(); }} />
           {/* <Button titleStyle={styles.bottomButtonTitle} type="solid" title="ピンを削除" onPress={() => {this.removeAllMarkers();}}/> */}
           <Button titleStyle={styles.bottomButtonTitle} type="solid" title="再生" onPress={() => {Spotify.setPlaying(true); this.setState({dontPlay: false}); }}/>
           <Button titleStyle={styles.bottomButtonTitle} type="solid" title="停止" onPress={() => {Spotify.setPlaying(false); this.setState({dontPlay: true}); }}/>

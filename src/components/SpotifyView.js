@@ -6,7 +6,7 @@ export default class SpotifyView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      spotifyID: null,
+      spotifyID: this.props.spotifyID,
       loggedIn: false,
     }
   }
@@ -57,10 +57,13 @@ export default class SpotifyView extends React.Component {
   onEndEditing = () => {
     Spotify.getTrack(this.state.spotifyID)
       .then((res) => {
-        this.props.setSpotifyID(this.state.spotifyID);
-        this.props.setTitle(res.name);
-        this.props.setArtist(res.album.artists[0].name)
-        this.props.setImageUrl(res.album.images[0].url)
+        const music = {
+          spotifyID: this.state.spotifyID,
+          title: res.name,
+          artist: res.album.artists[0].name,
+          imageUrl: res.album.images[0].url
+        };
+        this.props.setMusic(music);
       })
       .catch((error) => {
         Alert.alert("Failed to get track.", error.message);

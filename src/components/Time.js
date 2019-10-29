@@ -6,9 +6,19 @@ export default class Time extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      date: null,
-      time: null
+      date: this.props.time.date,
+      time: this.props.time.time
     }
+  }
+
+  async onDateChange(date) {
+    await this.setState({ date: date });
+    this.props.setTime(this.state);
+  }
+
+  async onTimeChange(time) {
+    await this.setState({ time: time });
+    this.props.setTime(this.state);
   }
 
   render() {
@@ -34,12 +44,7 @@ export default class Time extends Component {
             dateInput: {
             }
           }}
-          onDateChange={
-            (date) => {
-              this.setState({ date: date })
-              this.props.setDate(date)
-            }
-          }
+          onDateChange={(date) => { this.onDateChange(date); }}
         />
         <DatePicker
           style={{ width: 200 }}
@@ -60,12 +65,7 @@ export default class Time extends Component {
             dateInput: {
             }
           }}
-          onDateChange={
-            (time) => {
-              this.setState({ time: time })
-              this.props.setTime(time)
-            }
-          }
+          onDateChange={(time) => { this.onTimeChange(time); }}
         />
       </View>
     )
