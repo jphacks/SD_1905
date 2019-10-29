@@ -9,15 +9,15 @@ import MainScreen from './src/MainScreen.js';
 
 const storage = new Storage({
   storageBackend: AsyncStorage
-})
-global.storage = storage // from all component
+});
+global.storage = storage; // from all component
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       spotifyInitialized: false,
-    }
+    };
     this.initMapInfo();
   }
 

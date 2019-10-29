@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, ScrollView, Dimensions, Image , TextInput} from 'react-native';
+import { StyleSheet, Text, View, Alert, ScrollView, Dimensions, Image, TextInput } from 'react-native';
 import { Button } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 import Spotify from 'rn-spotify-sdk';
@@ -9,12 +9,12 @@ import SpotifyView from './components/SpotifyView.js';
 
 const SCREEN = Dimensions.get('window');
 const DEFAULT_IMAGE_URL = "https://yt3.ggpht.com/a/AGF-l7-GzUSbLNsd66pJy2tnI6wMDBmu4rKgInMk8Q=s288-c-k-c0xffffffff-no-rj-mo";
-let musicData =[];
-let trackJSX=[];
+let musicData = [];
+let trackJSX = [];
 
 export default class SettingScreen extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       id: null,
       coordinate: {
@@ -32,7 +32,7 @@ export default class SettingScreen extends React.Component {
         imageUrl: DEFAULT_IMAGE_URL,
       },
       searchStatus: "",
-    }
+    };
     Object.assign(this.state, this.props.info);
   }
 
@@ -40,10 +40,10 @@ export default class SettingScreen extends React.Component {
   setMusic = (music) => { this.setState({ music: music }) };
 
   saveData = async () => {
-    if(this.state.id === null) this.state.id = Date.now().toString();
+    if (this.state.id === null) this.state.id = Date.now().toString();
     this.props.storeMarker(this.state);
     this.props.closeModal();
-    Alert.alert("Success", "set the music in your world !!!")
+    Alert.alert("Success", "set the music in your world !!!");
   }
 
   onPressSetMusic = (num) => {
@@ -52,63 +52,59 @@ export default class SettingScreen extends React.Component {
   }
 
   searchMusic = async () => {
-    await Spotify.search(this.state.searchStatus,['track'])
-      .then(
-        res => {
-          musicData.length = 0;
-          var musicList = res.tracks;
-          for(let idx = 0; idx < 20; idx++){
-            musicData.push({
-              title: musicList.items[idx]["name"],
-              artist: musicList.items[idx]["album"]["artists"][0]["name"],
-              spotifyID: musicList.items[idx]["id"],
-              imageUrl: musicList.items[idx]["album"]["images"][2]["url"],
-            });
-          }
+    await Spotify.search(this.state.searchStatus, ['track'])
+      .then((res) => {
+        musicData.length = 0;
+        var musicList = res.tracks;
+        for (let idx = 0; idx < 20; idx++) {
+          musicData.push({
+            title: musicList.items[idx]["name"],
+            artist: musicList.items[idx]["album"]["artists"][0]["name"],
+            spotifyID: musicList.items[idx]["id"],
+            imageUrl: musicList.items[idx]["album"]["images"][2]["url"],
+          });
+        }
         trackJSX.length = 0;
-        for(let idx=0; idx < musicData.length; idx++){
+        for (let idx = 0; idx < musicData.length; idx++) {
           trackJSX.push(
-            <Button key={idx} title={"Title: "+ musicData[idx].title + " Artist: "+ musicData[idx].artist} onPress={this.onPressSetMusic.bind(this, idx)}/>
+            <Button key={idx} title={"Title: " + musicData[idx].title + " Artist: " + musicData[idx].artist} onPress={this.onPressSetMusic.bind(this, idx)} />
           );
         }
-        this.refs.modal1.open(); 
-        }
-      )
-      .catch(
-        err => {
-          Alert.alert("Search failure");
-          console.log(err);
-        }
-      )
+        this.refs.modal1.open();
+      })
+      .catch((err) => {
+        Alert.alert("Search failure");
+        console.log(err);
+      });
   }
 
   onChangeText = (text) => {
     this.setState({
       searchStatus: text,
-    })
+    });
   }
 
   render() {
     return (
       <View style={styles.setting}>
         <View style={{ width: '90%', marginLeft: '5%', paddingBottom: 10, borderBottomWidth: 2, borderColor: '#333' }}>
-          <Text style={{ marginLeft: 20, fontSize: 30, margin: 0, color: '#333'}}>Settings</Text>
+          <Text style={{ marginLeft: 20, fontSize: 30, margin: 0, color: '#333' }}>Settings</Text>
         </View>
 
         {/* Sample Music */}
         <View style={styles.container}>
           {/* <Text>Music: </Text> */}
-          <TextInput 
+          <TextInput
             value={this.state.searchStatus}
             style={{ height: 30, width: "70%", borderColor: 'gray', borderWidth: 0.5, marginBottom: 10 }}
             placeholder={"Search"}
-            onChangeText={(text) => {this.onChangeText(text)}}
+            onChangeText={(text) => { this.onChangeText(text) }}
           />
-          <Button title="Search Music" onPress={() => {this.searchMusic();}} />
+          <Button title="Search Music" onPress={() => { this.searchMusic(); }} />
           <Modal style={styles.modal} position={"center"} backdrop={true} ref={"modal1"} swipeArea={20} coverScreen={true}>
             <ScrollView width={SCREEN.width}>
               <View>
-                { trackJSX }
+                {trackJSX}
               </View>
             </ScrollView>
           </Modal>
@@ -125,7 +121,7 @@ export default class SettingScreen extends React.Component {
         </View>
 
         <View style={styles.container}>
-          <Button title="Save" onPress={() => {this.saveData();}} />
+          <Button title="Save" onPress={() => { this.saveData(); }} />
         </View >
       </View>
     )
