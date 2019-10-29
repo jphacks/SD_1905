@@ -9,50 +9,47 @@ import { getDistance } from 'geolib';
 import moment from "moment";
 import Spotify from 'rn-spotify-sdk';
 
-import { SettingScreen } from './SettingScreen.js';
+import SettingScreen from './SettingScreen.js';
 
-const nearDist = 100;
-const screen = Dimensions.get('window');
+const SCREEN = Dimensions.get('window');
+const ASPECT_RATIO = SCREEN.width / SCREEN.height;
+const NEAR_DIST = 100;
+const DEFAULT_LATITUDE = 38.260132;
+const DEFAULT_LONGITUDE = 140.882432;
+const DEFAULT_LATITUDE_DELTA = 0.00700;
+const DEFAULT_LONGITUDE_DELTA = DEFAULT_LATITUDE_DELTA * ASPECT_RATIO;
+const GEOLOCATION_OPTIONS = {
+  enableHighAccuracy: true,
+  timeout: 1000,
+  maximumAge: 0
+};
 
-export class MainScreen extends React.Component {
+export default class MainScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      latitude: defaultLatitude,
-      longitude: defaultLongitude,
-      latitudeDelta: defaultLatitudeDelta,
-      longitudeDelta: defaultLongitudeDelta,
+      latitude: DEFAULT_LATITUDE,
+      longitude: DEFAULT_LONGITUDE,
+      latitudeDelta: DEFAULT_LATITUDE_DELTA,
+      longitudeDelta: DEFAULT_LONGITUDE_DELTA,
       markers: [],
       settingInfo: {},
       dontPlay: false
     };
 
-    this.settingInfo = {};
-    this.selectedMarkerId = 0;
-    this.selectedMarker = {
-      id: "0",
-      coordinate: {latitude: null, longitude: null},
-      date: "2016-05-15",
-      time: "8:16 PM",
-      musicId: "your world is",
-      title: "title"
-    }
-
-    this.loadMarkers = this.loadMarkers.bind(this);
-
     this.moveToCurrentPosition();
+    this.loadMarkers = this.loadMarkers.bind(this);
     this.loadMarkers()
   }
 
+  componentDidMount() {
+    this.interval = setInterval(() => {
+      this.checker()
+    }, 10000);
+  }
+
   getCurrentPosition() {
-    options = {
-      enableHighAccuracy: true,
-      timeout: 1000,
-      maximumAge: 0
-    };
-    return new Promise((resolve, reject) => {
-      Geolocation.getCurrentPosition(resolve, reject, options);
-    });
+    return new Promise((resolve, reject) => {Geolocation.getCurrentPosition(resolve, reject, GEOLOCATION_OPTIONS);});
   }
 
   async loadMarkers() {
@@ -67,12 +64,12 @@ export class MainScreen extends React.Component {
     // TODO: O(n) -> O(1) ：キー情報を付与するなどして
     let exist = false;
     for(let i = 0; i < markers.length; i++) {
-      if(markers[i].id !== marker.id)  continue;
+      if(markers[i].id !== marker.id) continue;
       exist = true;
       markers[i] = marker;
       break;
     }
-    if(!exist)  markers.push(marker);
+    if(!exist) markers.push(marker);
     await global.storage.save({ key: 'mapInfo', data: markers });
     this.loadMarkers();
   }
@@ -83,11 +80,8 @@ export class MainScreen extends React.Component {
       {latitude: c_lat, longitude: c_lng}
     );
     console.log("dist: " + dist);
-    if(dist <= nearDist){
-      return true;
-    } else {
-      return false;
-    }
+    if(dist <= NEAR_DIST) return true;
+    else return false;
   }
 
   isDateTime(obj) {
@@ -102,22 +96,18 @@ export class MainScreen extends React.Component {
     if (date == null || date == currentDate) isDate = true;
     if (time == null || time == currentTime) isTime = true;
 
-    if (isDate == true && isTime == true) {
-      return true;
-    } else {
-      return false;
-    }
+    if (isDate == true && isTime == true) return true;
+    else return false;
   }
 
-  musicPlay = (spotifyID) => {
+  playMusic = async (spotifyID) => {
     const spotifyURI = "spotify:track:" + spotifyID;
-    Spotify.playURI(spotifyURI, 0, 0).
-      then(() => {
+    Spotify.playURI(spotifyURI, 0, 0)
+      .then(() => {
         // success
       })
       .catch((error) => {
-        // fail
-        //Alert.alert("Error", error.message);
+        console.warn(error);
       });
   }
 
@@ -133,17 +123,12 @@ export class MainScreen extends React.Component {
       .load({ key: 'mapInfo' })
       .then(res => {
         console.log('informations')
-        // console.log(res)
         res.map(obj => {
-          // console.log(obj);
           if (this.isNear(obj, latitude, longitude) && this.isDateTime(obj)) {
-            const musicId = obj.musicId;
             this.setState({ musicId: obj.musicId })
-            // musicPlay(obj.musicId)
-            // Alert.alert(obj.musicId)
             console.log('hit!! ' + obj.musicId)
             if (obj.spotifyID != null) {
-              this.musicPlay(obj.spotifyID)
+              this.playMusic(obj.spotifyID)
             }
           }
           else {
@@ -154,18 +139,12 @@ export class MainScreen extends React.Component {
       .catch(err => console.warn(err))
   }
 
-  closeModal = () => {
-    this.refs.modal.close();
-  }
-
   async moveToCurrentPosition() {
-    await this.getCurrentPosition().then((position) => this.map.animateToRegion(position.coords));
-  }
-
-  componentDidMount() {
-    this.interval = setInterval(() => {
-      this.checker()
-    }, 10000);
+    this.getCurrentPosition()
+      .then((position) => {
+        const region = Object.assign({}, position.coords, {latitudeDelta: DEFAULT_LATITUDE_DELTA, longitudeDelta: DEFAULT_LONGITUDE_DELTA});
+        this.map.animateToRegion(region);
+      });
   }
 
   async moveMarker(index, coordinate) {
@@ -183,16 +162,16 @@ export class MainScreen extends React.Component {
     this.loadMarkers();
   }
 
-  async storeCurrentPosition() {
-    const position = await this.getCurrentPosition();
-    const {latitude, longitude} = position.coords;
-    this.openSettingsModal({coordinate: {latitude, longitude}});
-  }
-
   // TODO: 取り除く（デバッグ用だから要らない子）
   removeAllMarkers() {
     global.storage.save({key: 'mapInfo', data: []});
     this.setState({markers: []});
+  }
+
+  async storeCurrentPosition() {
+    const position = await this.getCurrentPosition();
+    const {latitude, longitude} = position.coords;
+    this.openSettingsModal({coordinate: {latitude, longitude}});
   }
 
   async openSettingsModal(info) {
@@ -200,9 +179,13 @@ export class MainScreen extends React.Component {
     this.refs.modal.open();
   }
 
+  closeModal = () => {
+    this.refs.modal.close();
+  }
+
   render() {
     return (
-      <View style={styles.Main}>
+      <View style={styles.main}>
         <MapView
           provider={PROVIDER_DEFAULT}
           ref={ref => {this.map = ref;}}
@@ -219,8 +202,7 @@ export class MainScreen extends React.Component {
           onLongPress={ event => {
             const settingInfo = {coordinate : event.nativeEvent.coordinate};
             this.openSettingsModal(settingInfo);
-          }
-          }
+          }}
         >
           {this.state.markers.map((marker, index) => (
             <Marker draggable
@@ -230,9 +212,7 @@ export class MainScreen extends React.Component {
               onDragEnd={(event) => {this.moveMarker(index, event.nativeEvent.coordinate)}}
               onPress={() => {
                 this.setState({settingInfo: this.state.markers[index]});
-              }}
-              // onPress={this.selectedMarker = this.state.markers[index]}
-            >
+              }}>
               <Callout>
                 <View>
                   <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
@@ -247,10 +227,9 @@ export class MainScreen extends React.Component {
                     </View>
                   </View>
                   <View style={{flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', marginTop: 10}}>
-
-                    <Button buttonStyle={{backgroundColor: 'red'}} titleStyle={{fontSize: 13, fontWeight: 'bold'}} type="solid"  title="Remove" onPress={() => { this.removeMarker(index); }} />
-                    <Button titleStyle={{fontSize: 13, fontWeight: 'bold'}} type="solid"   type="solid" title="Edit" onPress={() => { this.openSettingsModal(this.state.settingInfo); }} />
-                    <Button titleStyle={{fontSize: 13, fontWeight: 'bold'}} type="solid"   type="solid" title="再生" onPress={() => { Spotify.setPlaying(true); this.setState({dontPlay: false}); Spotify.playURI("spotify:track:" + this.state.markers[index].spotifyID, 0, 0); }} />
+                    <Button buttonStyle={{backgroundColor: 'red'}} titleStyle={{fontSize: 13, fontWeight: 'bold'}} type="solid" title="Remove" onPress={() => { this.removeMarker(index); }} />
+                    <Button titleStyle={{fontSize: 13, fontWeight: 'bold'}} type="solid" title="Edit" onPress={() => { this.openSettingsModal(this.state.settingInfo); }} />
+                    <Button titleStyle={{fontSize: 13, fontWeight: 'bold'}} type="solid" title="再生" onPress={() => { this.setState({dontPlay: false}); this.playMusic(this.state.markers[index].spotifyID); }} />
                   </View>
                 </View>
               </Callout>
@@ -259,14 +238,15 @@ export class MainScreen extends React.Component {
         </MapView>
 
         <View style={{ position: 'absolute', flexDirection: "row", left: 0, right: 0, bottom: 60, justifyContent: 'space-evenly' }}>
-          <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="現在地へ移動" onPress={() => { this.moveToCurrentPosition();}} />
-          <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="ここで登録" onPress={() => { this.storeCurrentPosition(); }} />
-          {/* <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="ピンを削除" onPress={() => {this.removeAllMarkers();}}/> */}
-          <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="再生" onPress={() => {Spotify.setPlaying(true); this.setState({dontPlay: false}); }}/>
-          <Button titleStyle={{ fontWeight: 'bold', fontSize: 13.5 }} type="solid" title="停止" onPress={() => {Spotify.setPlaying(false); this.setState({dontPlay: true}); }}/>
+          <Button titleStyle={styles.bottomButtonTitle} type="solid" title="現在地へ移動" onPress={() => { this.moveToCurrentPosition();}} />
+          <Button titleStyle={styles.bottomButtonTitle} type="solid" title="ここで登録" onPress={() => { this.storeCurrentPosition(); }} />
+          {/* <Button titleStyle={styles.bottomButtonTitle} type="solid" title="ピンを削除" onPress={() => {this.removeAllMarkers();}}/> */}
+          <Button titleStyle={styles.bottomButtonTitle} type="solid" title="再生" onPress={() => {Spotify.setPlaying(true); this.setState({dontPlay: false}); }}/>
+          <Button titleStyle={styles.bottomButtonTitle} type="solid" title="停止" onPress={() => {Spotify.setPlaying(false); this.setState({dontPlay: true}); }}/>
         </View>
+
         <Modal style={styles.modal} position={"bottom"} ref={"modal"} swipeArea={20}>
-          <ScrollView width={screen.width}>
+          <ScrollView width={SCREEN.width}>
             <SettingScreen
               storeMarker={this.storeMarker}
               closeModal={this.closeModal}
@@ -286,7 +266,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
   },
-  Main: {
+  main: {
     flex: 1
   },
   modal: {
@@ -297,9 +277,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
     overflow: 'hidden'
   },
+  bottomButtonTitle: {
+    fontWeight: 'bold',
+    fontSize: 13.5
+  }
 })
-
-const defaultLatitude = 38.260132;
-const defaultLongitude = 140.882432;
-const defaultLatitudeDelta = 0.00520
-const defaultLongitudeDelta = 0.00520

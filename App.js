@@ -5,8 +5,7 @@ import Storage from 'react-native-storage';
 import AsyncStorage from '@react-native-community/async-storage';
 import Spotify from 'rn-spotify-sdk';
 
-import { MainScreen } from './src/MainScreen.js';
-import { SettingScreen } from './src/SettingScreen.js';
+import MainScreen from './src/MainScreen.js';
 
 const storage = new Storage({
   storageBackend: AsyncStorage
@@ -26,7 +25,7 @@ export default class App extends React.Component {
   async initMapInfo() {
     global.storage
       .load({ key: 'mapInfo' })
-      .catch( () => { global.storage.save({ key: 'mapInfo', data: [] }) });
+      .catch(() => { global.storage.save({ key: 'mapInfo', data: [] }) });
   }
 
   async initializeSpotify() {
@@ -51,7 +50,7 @@ export default class App extends React.Component {
 
   componentDidMount() {
     this.initializeSpotify().catch((error) => {
-      Alert.alert("Error", error.message);
+      Alert.alert("Failed to initialize Spotify.", error.message);
     });
   }
 
@@ -61,7 +60,7 @@ export default class App extends React.Component {
         <View style={styles.container}>
           <Text style={styles.loadMessage}>
             Loading...
-					</Text>
+          </Text>
         </View>
       );
     }

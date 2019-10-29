@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { View, StyleSheet, Text, Button, Alert } from 'react-native'
 import DatePicker from 'react-native-datepicker'
 
-export class Time extends Component {
+export default class Time extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -13,7 +13,7 @@ export class Time extends Component {
 
   render() {
     return (
-      <View style={styles.Pickers}>
+      <View style={styles.pickers}>
         <DatePicker
           style={{ width: 200 }}
           date={this.state.date}
@@ -37,7 +37,7 @@ export class Time extends Component {
           onDateChange={
             (date) => {
               this.setState({ date: date })
-              this.props.settingDate(date)
+              this.props.setDate(date)
             }
           }
         />
@@ -63,7 +63,7 @@ export class Time extends Component {
           onDateChange={
             (time) => {
               this.setState({ time: time })
-              this.props.settingTime(time)
+              this.props.setTime(time)
             }
           }
         />
@@ -73,7 +73,7 @@ export class Time extends Component {
 }
 
 const styles = StyleSheet.create({
-  Pickers: {
+  pickers: {
     // width: '80%',
     backgroundColor: '#FFFFFF',
     justifyContent: 'center',

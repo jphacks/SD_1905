@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, Alert, TouchableHighlight, TextInput } from 'react-native';
 import Spotify from 'rn-spotify-sdk';
 
-export class SpotifyView extends React.Component {
+export default class SpotifyView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -27,11 +27,8 @@ export class SpotifyView extends React.Component {
             spotifyLoggedIn: true
           })
         }
-        else {
-          // cancelled
-        }
       }).catch((error) => {
-        Alert.alert("Error", error.message);
+        Alert.alert("Failed to log into Spotify.", error.message);
       });
     }
     else {
@@ -60,13 +57,13 @@ export class SpotifyView extends React.Component {
   onEndEditing = () => {
     Spotify.getTrack(this.state.spotifyID)
       .then((res) => {
-        this.props.settingSpotifyID(this.state.spotifyID);
-        this.props.settingTitle(res.name);
-        this.props.settingArtist(res.album.artists[0].name)
-        this.props.settingImageUrl(res.album.images[0].url)
+        this.props.setSpotifyID(this.state.spotifyID);
+        this.props.setTitle(res.name);
+        this.props.setArtist(res.album.artists[0].name)
+        this.props.setImageUrl(res.album.images[0].url)
       })
       .catch((error) => {
-        Alert.alert("Failet to get track.", error.message);
+        Alert.alert("Failed to get track.", error.message);
       });
   }
 
@@ -74,9 +71,6 @@ export class SpotifyView extends React.Component {
     if (!this.state.spotifyLoggedIn) {
       return (
         <View style={styles.container}>
-          {/* <Text style={styles.greeting}>
-            Hello! Log into your spotify
-          </Text> */}
           <TouchableHighlight onPress={this.loginSpotify} style={styles.spotifyLoginButton}>
             <Text style={styles.spotifyLoginButtonText}>Log into Spotify</Text>
           </TouchableHighlight>
@@ -87,9 +81,9 @@ export class SpotifyView extends React.Component {
       return (
         <View style={styles.container}>
           <TextInput
-            style={{ height: 30, width: 300, borderColor: 'gray', borderWidth: 1 }}
-            onChangeText={(text) => {this.onChangeURI(text)}}
+            style={styles.spotifyUriInput}
             placeholder={'Spotify URIを入力してください。'}
+            onChangeText={(text) => {this.onChangeURI(text)}}
             onEndEditing={() => this.onEndEditing()}
           />
         </View>
@@ -103,9 +97,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
   },
-
   spotifyLoginButton: {
     justifyContent: 'center',
     borderRadius: 18,
@@ -113,17 +105,17 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     width: 200,
     height: 40,
-    margin: 20,
+    margin: 10,
   },
   spotifyLoginButtonText: {
     fontSize: 20,
     textAlign: 'center',
     color: 'white',
   },
-
-  greeting: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
+  spotifyUriInput: {
+    height: 30,
+    width: 300,
+    borderColor: 'gray',
+    borderWidth: 1,
+  }
 });
