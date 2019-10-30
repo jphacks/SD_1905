@@ -35,12 +35,12 @@ android_library(
 
 android_build_config(
     name = "build_config",
-    package = "com.jphacks",
+    package = "com.musicat",
 )
 
 android_resource(
     name = "res",
-    package = "com.jphacks",
+    package = "com.musicat",
     res = "src/main/res",
 )
 

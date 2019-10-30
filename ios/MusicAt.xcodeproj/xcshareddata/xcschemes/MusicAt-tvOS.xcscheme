@@ -29,9 +29,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-               BuildableName = "jphacks-tvOS.app"
-               BlueprintName = "jphacks-tvOS"
-               ReferencedContainer = "container:jphacks.xcodeproj">
+               BuildableName = "MusicAt-tvOS.app"
+               BlueprintName = "MusicAt-tvOS"
+               ReferencedContainer = "container:MusicAt.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -43,9 +43,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2D02E48F1E0B4A5D006451C7"
-               BuildableName = "jphacks-tvOSTests.xctest"
-               BlueprintName = "jphacks-tvOSTests"
-               ReferencedContainer = "container:jphacks.xcodeproj">
+               BuildableName = "MusicAt-tvOSTests.xctest"
+               BlueprintName = "MusicAt-tvOSTests"
+               ReferencedContainer = "container:MusicAt.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -61,9 +61,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2D02E48F1E0B4A5D006451C7"
-               BuildableName = "jphacks-tvOSTests.xctest"
-               BlueprintName = "jphacks-tvOSTests"
-               ReferencedContainer = "container:jphacks.xcodeproj">
+               BuildableName = "MusicAt-tvOSTests.xctest"
+               BlueprintName = "MusicAt-tvOSTests"
+               ReferencedContainer = "container:MusicAt.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -71,9 +71,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-            BuildableName = "jphacks-tvOS.app"
-            BlueprintName = "jphacks-tvOS"
-            ReferencedContainer = "container:jphacks.xcodeproj">
+            BuildableName = "MusicAt-tvOS.app"
+            BlueprintName = "MusicAt-tvOS"
+            ReferencedContainer = "container:MusicAt.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -94,9 +94,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-            BuildableName = "jphacks-tvOS.app"
-            BlueprintName = "jphacks-tvOS"
-            ReferencedContainer = "container:jphacks.xcodeproj">
+            BuildableName = "MusicAt-tvOS.app"
+            BlueprintName = "MusicAt-tvOS"
+            ReferencedContainer = "container:MusicAt.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -113,9 +113,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-            BuildableName = "jphacks-tvOS.app"
-            BlueprintName = "jphacks-tvOS"
-            ReferencedContainer = "container:jphacks.xcodeproj">
+            BuildableName = "MusicAt-tvOS.app"
+            BlueprintName = "MusicAt-tvOS"
+            ReferencedContainer = "container:MusicAt.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

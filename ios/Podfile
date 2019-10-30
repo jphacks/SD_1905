@@ -1,8 +1,8 @@
 platform :ios, '9.0'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-target 'jphacks' do
-  # Pods for jphacks
+target 'MusicAt' do
+  # Pods for MusicAt
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
   pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
   pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
@@ -34,8 +34,7 @@ target 'jphacks' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-
-  target 'jphacksTests' do
+  target 'MusicAtTests' do
     inherit! :search_paths
     # Pods for testing
   end
@@ -49,10 +48,10 @@ target 'jphacks' do
   use_native_modules!
 end
 
-target 'jphacks-tvOS' do
-  # Pods for jphacks-tvOS
+target 'MusicAt-tvOS' do
+  # Pods for MusicAt-tvOS
 
-  target 'jphacks-tvOSTests' do
+  target 'MusicAt-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end

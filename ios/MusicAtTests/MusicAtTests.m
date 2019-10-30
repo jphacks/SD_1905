@@ -14,11 +14,11 @@
 #define TIMEOUT_SECONDS 600
 #define TEXT_TO_LOOK_FOR @"Welcome to React"
 
-@interface jphacksTests : XCTestCase
+@interface MusicAtTests : XCTestCase
 
 @end
 
-@implementation jphacksTests
+@implementation MusicAtTests
 
 - (BOOL)findSubviewInView:(UIView *)view matching:(BOOL(^)(UIView *view))test
 {
