@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
   modal: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: 400,
+    height: SCREEN.height*0.7,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     overflow: 'hidden'
