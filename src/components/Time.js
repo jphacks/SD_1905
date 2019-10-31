@@ -11,12 +11,12 @@ export default class Time extends Component {
     }
   }
 
-  async onDateChange(date) {
+  onDateChange = async (date) => {
     await this.setState({ date: date });
     this.props.setTime(this.state);
   }
 
-  async onTimeChange(time) {
+  onTimeChange = async (time) => {
     await this.setState({ time: time });
     this.props.setTime(this.state);
   }

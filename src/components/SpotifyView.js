@@ -10,17 +10,12 @@ export default class SpotifyView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loggedIn: false,
+      spotifyLoggedIn: false,
       music: this.props.music,
       spotifyID: this.props.music.spotifyID,
       query: "",
       tracks: [],
     };
-  }
-
-  componentDidMount() {
-    const loggedIn = Spotify.isLoggedIn();
-    this.setState({ spotifyLoggedIn: loggedIn });
   }
 
   onPressLoginSpotify = () => {
@@ -107,6 +102,11 @@ export default class SpotifyView extends React.Component {
     this.searchModal.close();
   }
 
+  componentDidMount() {
+    const loggedIn = Spotify.isLoggedIn();
+    this.setState({ spotifyLoggedIn: loggedIn });
+  }
+
   render() {
     if (!this.state.spotifyLoggedIn) {
       return (
@@ -137,7 +137,7 @@ export default class SpotifyView extends React.Component {
                     <Button
                       key={idx}
                       title={"Title: " + track.title + " Artist: " + track.artist}
-                      onPress={() => { this.onPressSetMusic(idx) }} />
+                      onPress={() => { this.onPressSetMusic(idx); }} />
                   ))}
                 </View>
               </ScrollView>
@@ -150,7 +150,7 @@ export default class SpotifyView extends React.Component {
               placeholder={'Spotify URIを入力してください。'}
               onChangeText={(text) => { this.onChangeURI(text) }}
             />
-            <Button title="Set" onPress={() => this.onPressSetURI()}></Button>
+            <Button title="Set" onPress={() => { this.onPressSetURI(); }}></Button>
           </View>
         </View>
       )

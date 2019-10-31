@@ -24,6 +24,35 @@ const GEOLOCATION_OPTIONS = {
   maximumAge: 0
 };
 
+const getCurrentPosition = async () => {
+  return new Promise((resolve, reject) => { Geolocation.getCurrentPosition(resolve, reject, GEOLOCATION_OPTIONS); });
+}
+
+const isNear = (tarLat, tarLng, curLat, curLng) => {
+  const dist = getDistance(
+    { latitude: tarLat, longitude: tarLng },
+    { latitude: curLat, longitude: curLng }
+  );
+  console.log("dist: " + dist);
+  if (dist <= NEAR_DIST) return true;
+  else return false;
+}
+
+const isDateTime = (date, time) => {
+  const now = new Date();
+  const curDate = moment(now).format("YYYY-MM-DD");
+  const curTime = moment(now).format("h:mm A");
+
+  let isDate = false;
+  let isTime = false;
+
+  if (date == null || date == curDate) isDate = true;
+  if (time == null || time == curTime) isTime = true;
+
+  if (isDate == true && isTime == true) return true;
+  else return false;
+}
+
 export default class MainScreen extends React.Component {
   constructor(props) {
     super(props);
@@ -40,23 +69,16 @@ export default class MainScreen extends React.Component {
     };
 
     this.moveToCurrentPosition();
-    this.loadMarkers = this.loadMarkers.bind(this);
     this.loadMarkers();
   }
 
-  componentDidMount() {
-    this.interval = setInterval(() => {
-      this.checker()
-    }, 10000);
-  }
-
-  async loadMarkers() {
+  loadMarkers = async () => {
     const markers = await global.storage.load({ key: 'mapInfo' });
     this.setState({ markers });
     console.log(markers);
   }
 
-  async storeMarker(marker) {
+  storeMarker = async (marker) => {
     let markers = await global.storage.load({ key: 'mapInfo' });
 
     // TODO: O(n) -> O(1) ：キー情報を付与するなどして
@@ -72,31 +94,6 @@ export default class MainScreen extends React.Component {
     this.loadMarkers();
   }
 
-  isNear(tarLat, tarLng, curLat, curLng) {
-    const dist = getDistance(
-      { latitude: tarLat, longitude: tarLng },
-      { latitude: curLat, longitude: curLng }
-    );
-    console.log("dist: " + dist);
-    if (dist <= NEAR_DIST) return true;
-    else return false;
-  }
-
-  isDateTime(date, time) {
-    const now = new Date();
-    const curDate = moment(now).format("YYYY-MM-DD");
-    const curTime = moment(now).format("h:mm A");
-
-    let isDate = false;
-    let isTime = false;
-
-    if (date == null || date == curDate) isDate = true;
-    if (time == null || time == curTime) isTime = true;
-
-    if (isDate == true && isTime == true) return true;
-    else return false;
-  }
-
   playMusic = async (spotifyID) => {
     const spotifyURI = "spotify:track:" + spotifyID;
     Spotify.playURI(spotifyURI, 0, 0)
@@ -108,12 +105,12 @@ export default class MainScreen extends React.Component {
       });
   }
 
-  async checker() {
+  checker = async () => {
     const playbackState = Spotify.getPlaybackState();
     if (playbackState != null && playbackState.playing) return;
     if (this.state.dontPlay) return;
 
-    const position = await this.getCurrentPosition();
+    const position = await getCurrentPosition();
     const { latitude, longitude } = position.coords;
     console.log('you\'re @ (latlng) ' + latitude + '/' + longitude);
     global.storage
@@ -121,7 +118,7 @@ export default class MainScreen extends React.Component {
       .then(res => {
         console.log('informations');
         res.map(obj => {
-          if (this.isNear(obj.coordinate.latitude, obj.coordinate.longitude, latitude, longitude) && this.isDateTime(obj.time.date, obj.time.time)) {
+          if (isNear(obj.coordinate.latitude, obj.coordinate.longitude, latitude, longitude) && isDateTime(obj.time.date, obj.time.time)) {
             console.log('hit!! ' + obj.music.title);
             if (obj.music.spotifyID != null) this.playMusic(obj.music.spotifyID);
           }
@@ -133,19 +130,15 @@ export default class MainScreen extends React.Component {
       .catch((err) => { console.warn(err) });
   }
 
-  getCurrentPosition() {
-    return new Promise((resolve, reject) => { Geolocation.getCurrentPosition(resolve, reject, GEOLOCATION_OPTIONS); });
-  }
-
-  async moveToCurrentPosition() {
-    this.getCurrentPosition()
+  moveToCurrentPosition = async () => {
+    getCurrentPosition()
       .then((position) => {
         const region = Object.assign({}, position.coords, { latitudeDelta: DEFAULT_LATITUDE_DELTA, longitudeDelta: DEFAULT_LONGITUDE_DELTA });
         this.map.animateToRegion(region);
       });
   }
 
-  async moveMarker(index, coordinate) {
+  moveMarker = async (index, coordinate) => {
     const { latitude, longitude } = coordinate;
     let markers = await global.storage.load({ key: 'mapInfo' });
     markers[index].coordinate = { latitude, longitude };
@@ -153,7 +146,7 @@ export default class MainScreen extends React.Component {
     this.loadMarkers();
   }
 
-  async removeMarker(index) {
+  removeMarker = async (index) => {
     let markers = await global.storage.load({ key: 'mapInfo' });
     markers.splice(index, 1);
     global.storage.save({ key: 'mapInfo', data: markers });
@@ -161,24 +154,30 @@ export default class MainScreen extends React.Component {
   }
 
   // TODO: 取り除く（デバッグ用だから要らない子）
-  removeAllMarkers() {
+  removeAllMarkers = () => {
     global.storage.save({ key: 'mapInfo', data: [] });
     this.setState({ markers: [] });
   }
 
-  async registerCurrentPosition() {
-    const position = await this.getCurrentPosition();
+  registerCurrentPosition = async () => {
+    const position = await getCurrentPosition();
     const { latitude, longitude } = position.coords;
     this.openSettingsModal({ coordinate: { latitude, longitude } });
   }
 
-  async openSettingsModal(info) {
+  openSettingsModal = async (info) => {
     await this.setState({ settingInfo: info });
     this.refs.modal.open();
   }
 
   closeSettingsModal = () => {
     this.refs.modal.close();
+  }
+
+  componentDidMount() {
+    this.interval = setInterval(() => {
+      this.checker()
+    }, 10000);
   }
 
   render() {
