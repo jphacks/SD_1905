@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleSheet, Text, View, Alert, ScrollView, Dimensions, TextInput, Image } from 'react-native';
 import { Button } from 'react-native-elements';
 import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
-import Spotify from 'rn-spotify-sdk';
 
 import { getCurrentPosition } from '../lib/location';
 import Pin from './Pin.js';
@@ -86,7 +85,7 @@ export default class Map extends React.Component {
               moveMarker={(coords) => { this.moveMarker(index, coords); }}
               removeMarker={() => { this.removeMarker(index); }}
               openSettingsModal={() => { this.props.openSettingsModal(marker); }}
-              playMusic={() => { this.props.playMusic(marker.music.spotifyID); }}
+              playMusic={() => { this.props.playMusic(marker.music); }}
             />
           ))}
         </MapView>
@@ -95,8 +94,6 @@ export default class Map extends React.Component {
           <Button titleStyle={styles.bottomButtonTitle} type="solid" title="現在地へ移動" onPress={this.moveToCurrentPosition} />
           <Button titleStyle={styles.bottomButtonTitle} type="solid" title="ここで登録" onPress={this.registerCurrentPosition} />
           {/* <Button titleStyle={styles.bottomButtonTitle} type="solid" title="ピンを削除" onPress={() => {this.removeAllMarkers();}}/> */}
-          <Button titleStyle={styles.bottomButtonTitle} type="solid" title="再生" onPress={() => { Spotify.setPlaying(true); }} />
-          <Button titleStyle={styles.bottomButtonTitle} type="solid" title="停止" onPress={() => { Spotify.setPlaying(false); }} />
         </View>
       </View>
     )
@@ -109,7 +106,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     left: 0,
     right: 0,
-    bottom: 60,
+    bottom: 50,
     justifyContent: 'space-evenly'
   },
 

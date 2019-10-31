@@ -8,6 +8,7 @@ import { getCurrentPosition } from './lib/location';
 import { isNear, isDateTime } from './lib/util';
 import SettingScreen from './SettingScreen.js';
 import Map from './components/Map.js';
+import Status from './components/Status.js';
 
 const SCREEN = Dimensions.get('window');
 
@@ -17,10 +18,12 @@ export default class MainScreen extends React.Component {
     this.state = {
       markers: [],
       settingInfo: {},
+      music: null,
       isPlaying: false,
       isSearching: true,
     };
     this.loadMarkers();
+    this.interval = setInterval(() => { this.checker(); }, 10000);
   }
 
   loadMarkers = async () => {
@@ -45,20 +48,49 @@ export default class MainScreen extends React.Component {
     this.loadMarkers();
   }
 
-  playMusic = async (spotifyID) => {
-    const spotifyURI = "spotify:track:" + spotifyID;
+  playMusic = async (music) => {
+    const spotifyURI = "spotify:track:" + music.spotifyID;
     Spotify.playURI(spotifyURI, 0, 0)
       .then(() => {
-        this.setState({ isPlaying: true });
+        this.setState({
+          music: music,
+          isPlaying: true,
+        });
       })
-      .catch((error) => {
-        console.warn(error);
-      });
+      .catch((error) => { console.warn(error); });
+  }
+
+  togglePlaying = async () => {
+    if (this.state.music == null) return;
+    const playbackState = await Spotify.getPlaybackStateAsync();
+    if (playbackState == null) return;
+    Spotify.setPlaying(!playbackState.playing)
+      .then(() => {
+        this.setState({
+          isPlaying: !playbackState.playing,
+          isSearching: !playbackState.playing
+        });
+      })
+  }
+
+  toggleSearching = () => {
+    this.setState({ isSearching: !this.state.isSearching });
+    if (!this.state.isPlaying) {
+      this.setState({ music: null });
+    }
   }
 
   checker = async () => {
-    const playbackState = Spotify.getPlaybackState();
+    if (!this.state.isSearching) return;
+    const playbackState = await Spotify.getPlaybackStateAsync();
     if (playbackState != null && playbackState.playing) return;
+    if (playbackState == null || !playbackState.playing) {
+      this.setState({
+        music: null,
+        isPlaying: false,
+        isSearching: true
+      })
+    }
 
     const position = await getCurrentPosition();
     const { latitude, longitude } = position.coords;
@@ -67,15 +99,20 @@ export default class MainScreen extends React.Component {
       .load({ key: 'mapInfo' })
       .then(res => {
         console.log('informations');
-        res.map(obj => {
+        const len = Object.keys(res).length;
+        for (let i = 0; i < len; i++) {
+          const obj = res[i];
           if (isNear(obj.coordinate.latitude, obj.coordinate.longitude, latitude, longitude) && isDateTime(obj.time.date, obj.time.time)) {
             console.log('hit!! ' + obj.music.title);
-            if (obj.music.spotifyID != null) this.playMusic(obj.music.spotifyID);
+            if (obj.music.spotifyID != null) {
+              this.playMusic(obj.music);
+              return;
+            }
           }
           else {
             console.log('not hit ...');
           }
-        })
+        }
       })
       .catch((err) => { console.warn(err) });
   }
@@ -89,20 +126,28 @@ export default class MainScreen extends React.Component {
     this.refs.modal.close();
   }
 
-  componentDidMount() {
-    this.interval = setInterval(() => { this.checker(); }, 10000);
-  }
-
   render() {
     return (
       <View style={styles.main}>
-        <Map
-          markers={this.state.markers}
-          loadMarkers={this.loadMarkers}
-          openSettingsModal={this.openSettingsModal}
-          closeSettingsModal={this.closeSettingsModal}
-          playMusic={this.playMusic}
-        />
+        <View style={{ flex: 0.20 }}>
+          <Status
+            music={this.state.music}
+            isPlaying={this.state.isPlaying}
+            isSearching={this.state.isSearching}
+            togglePlaying={this.togglePlaying}
+            toggleSearching={this.toggleSearching}
+          />
+        </View>
+
+        <View style={{ flex: 1 }}>
+          <Map
+            markers={this.state.markers}
+            loadMarkers={this.loadMarkers}
+            openSettingsModal={this.openSettingsModal}
+            closeSettingsModal={this.closeSettingsModal}
+            playMusic={this.playMusic}
+          />
+        </View>
 
         <Modal style={styles.modal} position={"bottom"} ref={"modal"} swipeArea={20}>
           <ScrollView width={SCREEN.width}>
