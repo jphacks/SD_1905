@@ -37,7 +37,7 @@ export default class SettingScreen extends React.Component {
   saveData = async () => {
     if (this.state.id === null) this.state.id = Date.now().toString();
     this.props.storeMarker(this.state);
-    this.props.closeModal();
+    this.props.closeSettingsModal();
     Alert.alert("Success", "set the music in your world !!!");
   }
 
