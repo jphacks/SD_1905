@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Alert, ScrollView, Dimensions, TouchableHighlight, TextInput, Image } from 'react-native';
+import { StyleSheet, Text, View, Alert, ScrollView, Dimensions, TouchableOpacity, TouchableHighlight, TextInput, Image } from 'react-native';
 import { Button } from 'react-native-elements';
 import Modal from 'react-native-modalbox';
 import Spotify from 'rn-spotify-sdk';
@@ -141,10 +141,21 @@ export default class SpotifyView extends React.Component {
               <ScrollView width={SCREEN.width}>
                 <View>
                   {this.state.tracks.map((track, idx) => (
-                    <Button
+                    <TouchableOpacity
                       key={idx}
-                      title={"Title: " + track.title + " Artist: " + track.artist}
-                      onPress={() => { this.onPressSetMusic(idx); }} />
+                      onPress={() => { this.onPressSetMusic(idx); }}
+                      style={[styles.bubble, styles.button]}
+                    >
+                      <View style={{flex: 1, flexDirection: 'row'}}>
+                        <View style={styles.searchJacket}>
+                          <Image source={{ uri: track.imageUrl }} style={{ width: 70, height: 70 }} />
+                        </View>
+                        <View style={styles.searchTextContainer}>
+                          <Text>{"Title: " + track.title}</Text>
+                          <Text>{"Artist: " + track.artist}</Text>
+                        </View>
+                      </View>
+                    </TouchableOpacity>
                   ))}
                 </View>
               </ScrollView>
@@ -179,6 +190,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   spotifyLoginButton: {
     justifyContent: 'center',
     borderRadius: 18,
@@ -188,11 +200,13 @@ const styles = StyleSheet.create({
     height: 40,
     margin: 5,
   },
+
   spotifyLoginButtonText: {
     fontSize: 20,
     textAlign: 'center',
     color: 'white',
   },
+
   spotifyLogoutButton: {
     justifyContent: 'center',
     borderRadius: 5,
@@ -202,11 +216,13 @@ const styles = StyleSheet.create({
     height: 30,
     margin: 0,
   },
+
   spotifyLogoutButtonText: {
     fontSize: 15,
     textAlign: 'center',
     color: 'black',
   },
+
   spotifyUriInput: {
     height: 30,
     margin: 10,
@@ -214,15 +230,35 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
   },
+
   jacket: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     margin: 0
   },
+
   modal: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: SCREEN.height * 0.6,
+    height: SCREEN.height * 0.7,
+  },
+
+  searchJacket: {
+    flex: 0.35,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 30,
+    marginTop: 15,
+    marginBottom: 15,
+  },
+
+  searchTextContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    marginLeft: 20,
+    marginRight: 20,
+    marginTop: 15,
+    marginBottom: 15,
   },
 });
