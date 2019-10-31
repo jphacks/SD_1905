@@ -77,6 +77,8 @@ const styles = StyleSheet.create({
     // width: '80%',
     backgroundColor: '#FFFFFF',
     justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
     // flexDirection: "colmun",
     // alignItems: 'center',
     // marginHorizontal:100,

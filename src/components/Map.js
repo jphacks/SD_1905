@@ -1,9 +1,10 @@
 import React from 'react';
 import { StyleSheet, Text, View, Alert, ScrollView, Dimensions, TextInput, Image } from 'react-native';
 import { Button } from 'react-native-elements';
-import MapView, { PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Circle, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 
-import { getCurrentPosition } from '../lib/location';
+import { getCurrentPosition } from '../lib/location.js';
+import { DEFAULT_NEAR_DIST } from '../lib/util.js';
 import Pin from './Pin.js';
 
 const SCREEN = Dimensions.get('window');
@@ -22,6 +23,13 @@ export default class Map extends React.Component {
         longitude: DEFAULT_LONGITUDE,
         latitudeDelta: DEFAULT_LATITUDE_DELTA,
         longitudeDelta: DEFAULT_LONGITUDE_DELTA,
+      },
+      circle: {
+        center: {
+          latitude: null,
+          longitude: null
+        },
+        radius: DEFAULT_NEAR_DIST,
       },
     };
     this.moveToCurrentPosition();
@@ -62,6 +70,27 @@ export default class Map extends React.Component {
     this.props.openSettingsModal({ coordinate: { latitude, longitude } });
   }
 
+  setCircle = (coordinate, radius) => {
+    this.setState({
+      circle: {
+        center: coordinate,
+        radius, radius
+      }
+    });
+  }
+
+  setCircleNull = () => {
+    this.setState({
+      circle: {
+        center: {
+          latitude: null,
+          longitude: null
+        },
+        radius: DEFAULT_NEAR_DIST,
+      },
+    })
+  }
+
   render() {
     return (
       <View style={{ flex: 1 }}>
@@ -77,7 +106,16 @@ export default class Map extends React.Component {
             const settingInfo = { coordinate: event.nativeEvent.coordinate };
             this.props.openSettingsModal(settingInfo);
           }}
+          onMarkerDeselect={this.setCircleNull}
         >
+          {this.state.circle.center.latitude != null &&
+            <Circle
+              center={this.state.circle.center}
+              radius={this.state.circle.radius}
+              strokeColor='#F00'
+              strokeWidth={2}
+            />
+          }
           {this.props.markers.map((marker, index) => (
             <Pin
               key={index}
@@ -86,6 +124,7 @@ export default class Map extends React.Component {
               removeMarker={() => { this.removeMarker(index); }}
               openSettingsModal={() => { this.props.openSettingsModal(marker); }}
               playMusic={() => { this.props.playMusic(marker.music); }}
+              showCircle={() => { this.setCircle(marker.coordinate, marker.nearDist); }}
             />
           ))}
         </MapView>

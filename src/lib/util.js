@@ -1,15 +1,16 @@
 import { getDistance } from 'geolib';
 import moment from "moment";
 
-const NEAR_DIST = 100;
+export const DEFAULT_NEAR_DIST = 100;
 
-export const isNear = (tarLat, tarLng, curLat, curLng) => {
+export const isNear = (tarLat, tarLng, curLat, curLng, nearDist) => {
+  if (nearDist == null) nearDist = DEFAULT_NEAR_DIST;
   const dist = getDistance(
     { latitude: tarLat, longitude: tarLng },
     { latitude: curLat, longitude: curLng }
   );
   console.log("dist: " + dist);
-  if (dist <= NEAR_DIST) return true;
+  if (dist <= nearDist) return true;
   else return false;
 }
 

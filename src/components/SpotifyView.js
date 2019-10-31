@@ -129,46 +129,22 @@ export default class SpotifyView extends React.Component {
     else {
       return (
         <View>
-          <View style={styles.container}>
+          <View style={styles.rowContainer}>
             <TextInput
-              style={{ margin: 5, height: 30, width: "70%", borderColor: 'gray', borderWidth: 0.5, marginBottom: 10 }}
+              style={styles.searchTextBox}
               placeholder={"Search"}
               onChangeText={(text) => { this.onChangeQuery(text) }}
             />
-            <Button title="Search Music" onPress={() => { this.onPressSearchMusic(); }} />
-
-            <Modal style={styles.modal} position={"center"} backdrop={true} ref={ref => { this.searchModal = ref; }} swipeArea={20} coverScreen={true}>
-              <ScrollView width={SCREEN.width}>
-                <View>
-                  {this.state.tracks.map((track, idx) => (
-                    <TouchableOpacity
-                      key={idx}
-                      onPress={() => { this.onPressSetMusic(idx); }}
-                      style={[styles.bubble, styles.button]}
-                    >
-                      <View style={{flex: 1, flexDirection: 'row'}}>
-                        <View style={styles.searchJacket}>
-                          <Image source={{ uri: track.imageUrl }} style={{ width: 70, height: 70 }} />
-                        </View>
-                        <View style={styles.searchTextContainer}>
-                          <Text>{"Title: " + track.title}</Text>
-                          <Text>{"Artist: " + track.artist}</Text>
-                        </View>
-                      </View>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </ScrollView>
-            </Modal>
+            <Button title="Search" onPress={() => { this.onPressSearchMusic(); }} />
           </View>
 
-          <View style={styles.container, { flexDirection: "row" }}>
+          <View style={styles.rowContainer}>
             <TextInput
-              style={styles.spotifyUriInput}
+              style={styles.searchTextBox}
               placeholder={'Spotify URIを入力してください。'}
               onChangeText={(text) => { this.onChangeURI(text) }}
             />
-            <Button title="Set" onPress={() => { this.onPressSetURI(); }}></Button>
+            <Button title="Set" onPress={() => { this.onPressSetURI(); }} />
           </View>
 
           <View style={styles.container}>
@@ -178,6 +154,30 @@ export default class SpotifyView extends React.Component {
               </Text>
             </TouchableHighlight>
           </View>
+
+          <Modal style={styles.modal} position={"center"} backdrop={true} ref={ref => { this.searchModal = ref; }} swipeArea={20} coverScreen={true}>
+            <ScrollView width={SCREEN.width}>
+              <View>
+                {this.state.tracks.map((track, idx) => (
+                  <TouchableOpacity
+                    key={idx}
+                    onPress={() => { this.onPressSetMusic(idx); }}
+                    style={[styles.bubble, styles.button]}
+                  >
+                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                      <View style={styles.searchJacket}>
+                        <Image source={{ uri: track.imageUrl }} style={{ width: 70, height: 70 }} />
+                      </View>
+                      <View style={styles.searchTextContainer}>
+                        <Text>{"Title: " + track.title}</Text>
+                        <Text>{"Artist: " + track.artist}</Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+          </Modal>
         </View>
       )
     }
@@ -189,6 +189,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+
+  rowContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: "row",
   },
 
   spotifyLoginButton: {
@@ -223,14 +230,6 @@ const styles = StyleSheet.create({
     color: 'black',
   },
 
-  spotifyUriInput: {
-    height: 30,
-    margin: 10,
-    width: 300,
-    borderColor: 'gray',
-    borderWidth: 1,
-  },
-
   jacket: {
     flex: 1,
     justifyContent: 'center',
@@ -242,6 +241,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: SCREEN.height * 0.7,
+  },
+
+  searchTextBox: {
+    flex: 0.8,
+    margin: 10,
+    height: 30,
+    width: "60%",
+    borderColor: 'gray',
+    borderWidth: 0.5,
   },
 
   searchJacket: {

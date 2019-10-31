@@ -102,7 +102,7 @@ export default class MainScreen extends React.Component {
         const len = Object.keys(res).length;
         for (let i = 0; i < len; i++) {
           const obj = res[i];
-          if (isNear(obj.coordinate.latitude, obj.coordinate.longitude, latitude, longitude) && isDateTime(obj.time.date, obj.time.time)) {
+          if (isNear(obj.coordinate.latitude, obj.coordinate.longitude, latitude, longitude, obj.nearDist) && isDateTime(obj.time.date, obj.time.time)) {
             console.log('hit!! ' + obj.music.title);
             if (obj.music.spotifyID != null) {
               this.playMusic(obj.music);

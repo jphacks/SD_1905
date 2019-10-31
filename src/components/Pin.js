@@ -18,8 +18,8 @@ export default class Pin extends React.Component {
         identifier={this.props.marker.id}
         coordinate={this.props.marker.coordinate}
         title={this.props.marker.music.title}
-        onDragEnd={(event) => { this.props.moveMarker(event.nativeEvent.coordinate) }}
-        onPress={() => { this.setState({ settingInfo: this.props.marker }); }}
+        onDragEnd={(event) => { this.props.moveMarker(event.nativeEvent.coordinate); this.props.showCircle(); }}
+        onPress={() => { this.setState({ settingInfo: this.props.marker }); this.props.showCircle(); }}
       >
         <Callout>
           <View>
