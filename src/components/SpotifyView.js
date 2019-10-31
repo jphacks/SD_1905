@@ -38,6 +38,13 @@ export default class SpotifyView extends React.Component {
     }
   }
 
+  onPressLogoutSpotify = () => {
+    Spotify.logout()
+      .then(() => {
+        this.setState({ spotifyLoggedIn: false });
+      });
+  }
+
   onChangeURI = (uri) => {
     let spotifyID;
     if (uri.slice(0, 14) == "spotify:track:") {
@@ -152,6 +159,14 @@ export default class SpotifyView extends React.Component {
             />
             <Button title="Set" onPress={() => { this.onPressSetURI(); }}></Button>
           </View>
+
+          <View style={styles.container}>
+            <TouchableHighlight onPress={this.onPressLogoutSpotify} style={styles.spotifyLogoutButton}>
+              <Text style={styles.spotifyLogoutButtonText}>
+                Logout
+              </Text>
+            </TouchableHighlight>
+          </View>
         </View>
       )
     }
@@ -171,12 +186,26 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     width: 200,
     height: 40,
-    margin: 10,
+    margin: 5,
   },
   spotifyLoginButtonText: {
     fontSize: 20,
     textAlign: 'center',
     color: 'white',
+  },
+  spotifyLogoutButton: {
+    justifyContent: 'center',
+    borderRadius: 5,
+    backgroundColor: '#CCC',
+    overflow: 'hidden',
+    width: 75,
+    height: 30,
+    margin: 0,
+  },
+  spotifyLogoutButtonText: {
+    fontSize: 15,
+    textAlign: 'center',
+    color: 'black',
   },
   spotifyUriInput: {
     height: 30,
